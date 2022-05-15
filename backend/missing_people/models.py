@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 from django.contrib.auth  import get_user_model
 import datetime
@@ -14,6 +15,7 @@ GENDER_CHOICES = (
 class MissingPerson(models.Model):
     applicant_police_station = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
+    image = models.ImageField(default='default.jpg', upload_to = 'missing_people')
     age = models.IntegerField(default=0)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default='M')
     isCriminal = models.BooleanField(default=False)

@@ -8,3 +8,4 @@ urlpatterns = [
     path('add/person', views.addPerson, name='addPerson'),
     path('add/track-history', views.addTrackHistory, name='addTrackhistory')
 ]
+

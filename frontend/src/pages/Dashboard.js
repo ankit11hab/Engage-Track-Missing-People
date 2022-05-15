@@ -1,8 +1,12 @@
-import React from 'react'
+import React from 'react';
+import './DashboardStyles.css';
+import Statistics from '../components/Statistics';
 
 const Dashboard = () => {
   return (
-    <div>Dashboard</div>
+    <div>
+      <Statistics />
+    </div>
   )
 }
 
