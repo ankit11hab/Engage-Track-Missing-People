@@ -1,0 +1,41 @@
+.left-nav {
+    width: 20%;
+    height: 100vh;
+    float: left;
+    display: flex;
+    flex-direction: column;
+    margin: 0 15px 0 0;
+    border-radius: 0 8px 8px 0;
+}
+
+.top-intro {
+    height: 60px;
+    background-color: #060f1f;
+    color: rgb(222, 222, 222);
+    font-size: 17px;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+    padding-left: 15px;
+}
+
+.bottom-links {
+    padding: 20px 0 0 0;
+    height: 100%;
+    background-color: #172338;
+    color: rgb(222, 222, 222);
+    font-size: 14.5px;
+}
+
+.bottom-link {
+    padding: 4px 6px 4px 6px;
+    margin: 2px 12px 2px 10px;
+    border-radius: 6px;
+    display: flex;
+}
+
+.bottom-link:hover {
+    background-color: #060f1f;
+    cursor: pointer;
+}
