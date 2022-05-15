@@ -10,7 +10,7 @@ const Header = () => {
           <NotificationsActiveOutlinedIcon style={{fontSize:"27px", color:"rgb(150, 150, 150)", margin:"10px 8px 10px 0"}} />
           {/* <AccountCircleOutlinedIcon style={{fontSize:"27px", color:"rgb(150, 150, 150)", margin:"10px 30px 10px 10px"}} /> */}
         </div>
-        <div style={{margin:"12px 30px 10px 10px", fontWeight:"500", color:"#6495ED"}}>Log In</div>
+        <div style={{margin:"12px 30px 10px 10px", fontWeight:"500", color:"#3f7bea"}}>Log In</div>
       </div>
     </div>
   )

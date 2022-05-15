@@ -34,6 +34,7 @@ const Navbar = () => {
 
   console.log('Path:',location.pathname)
   return (
+    <div className='left-nav-outer' style={{position:"relative"}}>
     <div className='left-nav'>
       <div className='top-intro'>
         <div style={{display:"flex"}}>
@@ -51,6 +52,7 @@ const Navbar = () => {
           )
         })}
       </div>
+    </div>
     </div>
   )
 }
