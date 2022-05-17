@@ -96,3 +96,29 @@ export const getPoliceStationDetails = (access_token) => async ( dispatch) => {
 
     return data;
 }
+
+
+export const editPoliceStationDetails = (access_token, details) => async ( dispatch) => {
+    let data;
+    try {
+
+        const config_header = {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+        };
+        const data = await axios.put(
+            `${config().url}/auth/edit-details/`,
+            details,
+            config_header
+        )
+
+
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}

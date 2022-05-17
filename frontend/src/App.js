@@ -10,6 +10,7 @@ import Login from "./pages/user/Login";
 import PrivateRoute from "./utils/PrivateRoute";
 import { useDispatch, useSelector } from 'react-redux';
 import { getPoliceStationDetails } from "./actions/action";
+import EditProfile from "./pages/user/EditProfile";
 
 
 
@@ -34,6 +35,7 @@ function App() {
 				<Routes>
 					<Route path="/" element={<Dashboard />} />
 					<Route exact path='/' element={<PrivateRoute />}>
+						<Route path="/edit-profile" element={<EditProfile />} />
 						<Route path="/add/missing-person" element={<AddMissingPerson />} />
 					</Route>
 					<Route path="/missing-people" element={<MissingPeople />} />

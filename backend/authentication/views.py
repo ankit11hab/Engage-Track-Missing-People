@@ -34,7 +34,7 @@ def editPoliceStationDetails(request):
     user = request.user
     data = request.data
     if "location" in data.keys():
-        user.latitude = data["location"]
+        user.location = data["location"]
     if "phone" in data.keys():
         user.phone = data["phone"]
     if "email" in data.keys():

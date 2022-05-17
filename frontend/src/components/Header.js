@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPoliceStationDetails, loginUser, logoutUser } from '../actions/action';
 import Select from 'react-select';
+import { useNavigate } from "react-router-dom";
 
 const style = {
   position: 'absolute',
@@ -69,6 +68,7 @@ const Header = () => {
   const handleloginModalOpen = () => setLoginModalOpen(true);
   const handleloginModalClose = () => setLoginModalOpen(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isAuthenticated = useSelector(state => state.isAuthenticated)
   const psd = useSelector(state => state.police_station_details)
 
@@ -88,6 +88,8 @@ const Header = () => {
   const handleChange = (e) => {
     if (e.value === 'logout')
       handleLogout();
+    if (e.value === 'edit')
+      navigate(`/edit-profile`);
   }
 
   return (
