@@ -20,12 +20,12 @@ class RegisterView(GenericAPIView):
 def getPoliceStationDetails(request):
     user = request.user
     station_details = {
-        "latitude": user.latitude,
-        "longitude": user.longitude,
+        "location": user.location,
         "police_station_uid": user.police_station_uid,
-        "email": user.email
+        "email": user.email,
+        "phone": user.phone
     }
-    return Response("Police station details changed", status=status.HTTP_200_OK)
+    return Response(station_details, status=status.HTTP_200_OK)
 
 
 @api_view(['PUT'])
@@ -33,10 +33,8 @@ def getPoliceStationDetails(request):
 def editPoliceStationDetails(request):
     user = request.user
     data = request.data
-    if "latitude" in data.keys():
-        user.latitude = data["latitude"]
-    if "longitude" in data.keys():
-        user.longitude = data["longitude"]
+    if "location" in data.keys():
+        user.latitude = data["location"]
     if "phone" in data.keys():
         user.phone = data["phone"]
     if "email" in data.keys():

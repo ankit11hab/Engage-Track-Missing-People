@@ -32,8 +32,7 @@ class MissingPerson(models.Model):
 class TrackHistory(models.Model):
     missing_person = models.ForeignKey(MissingPerson, on_delete=models.CASCADE, null=True)
     time_of_tracking = models.DateTimeField(default=datetime.datetime.now())
-    latitude = models.CharField(max_length=100,default="")
-    longitude = models.CharField(max_length=100,default="")
+    location = models.CharField(max_length=300,default="")
 
     def __str__(self):
         return f"{self.missing_person.name} | {self.time_of_tracking}"

@@ -1,9 +1,10 @@
-export const LOCAL_SERVER_URL = `http://localhost:8000/api/`;
+export const LOCAL_SERVER_URL = `http://localhost:8000`;
 export const LOCAL_SERVER_URL_MAIN = `http://localhost:8000`; 
-export const LOCAL_SERVER_URL_IP = `http://127.0.0.1:8000/`;
+export const LOCAL_SERVER_URL_IP = `http://127.0.0.1:8000`;
 export const config = ()=>{
     const confs = {
         'local':{
+            'url':LOCAL_SERVER_URL_MAIN,
             'email':'bajajtushar2019@gmail.com',
             'password': 'password',
             'auth':`${LOCAL_SERVER_URL}auth/token/`,

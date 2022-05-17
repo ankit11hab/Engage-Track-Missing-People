@@ -4,36 +4,32 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 
 class AccountManager(BaseUserManager):
-    def create_user(self, police_station_uid, phone, email, latitude, longitude, password=None):
+    def create_user(self, police_station_uid, phone, email, location, password=None):
         if not police_station_uid:
             raise ValueError("User must have a unique police station ID")
         if not phone:
             raise ValueError("User must have a phone number")
         if not email:
             raise ValueError("User must have an email ID")
-        if not latitude:
-            raise ValueError("User must have a latitude")
-        if not longitude:
-            raise ValueError("User must have a longitude")
+        if not location:
+            raise ValueError("User must have a location")
         user = self.model(
             police_station_uid = police_station_uid,
             phone = phone,
             email = self.normalize_email(email),
-            latitude = latitude,
-            longitude = longitude,
+            location = location,
         )
         user.set_password(password)
         user.save(using=self._db)
 
         return user
 
-    def create_superuser(self, police_station_uid, phone, email, latitude, longitude, password):
+    def create_superuser(self, police_station_uid, phone, email, location, password):
         user = self.create_user(
             police_station_uid = police_station_uid,
             phone = phone,
             email = email,
-            latitude = latitude,
-            longitude = longitude,
+            location = location,
             password=password
         )
         user.is_admin = True
@@ -46,8 +42,7 @@ class AccountManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     police_station_uid = models.CharField(verbose_name="police_station_uid",max_length=8, unique=True)
-    latitude = models.CharField(verbose_name="latitude",max_length=100, default="")
-    longitude = models.CharField(verbose_name="longitude",max_length=100, default="")
+    location = models.CharField(verbose_name="location", max_length=300, default="")
     phone = models.CharField(verbose_name="phone", max_length = 10, default="")
     email = models.EmailField(verbose_name="email",max_length=60, default="")
     date_joined = models.DateTimeField(verbose_name = "date joined", auto_now_add=True)
@@ -60,7 +55,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = AccountManager()
 
     USERNAME_FIELD = 'police_station_uid'
-    REQUIRED_FIELDS = ['latitude', 'longitude', 'phone','email']
+    REQUIRED_FIELDS = ['location', 'phone','email']
 
     def __str__(self):
         return self.police_station_uid

@@ -4,8 +4,8 @@ from .models import CustomUser
 
 
 class AccountAdmin(UserAdmin):
-    list_display = ('police_station_uid', 'date_joined', 'latitude', 'longitude', 'phone', 'email', 'last_login', 'is_admin', 'is_staff')
-    search_fields = ('police_station_uid', 'latitude', 'longitude', 'phone', 'email')
+    list_display = ('police_station_uid', 'date_joined', 'location', 'phone', 'email', 'last_login', 'is_admin', 'is_staff')
+    search_fields = ('police_station_uid', 'location', 'phone', 'email')
     readonly_fields = ('id','date_joined', 'last_login')
 
     ordering = ('police_station_uid',)

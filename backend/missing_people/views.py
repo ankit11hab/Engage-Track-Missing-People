@@ -35,8 +35,7 @@ def getPerson(request):
     for item in location:
         detail = {
             "time": item.time_of_tracking,
-            "latitude": item.latitude,
-            "longitude": item.longitude
+            "location": item.location
         }
         track_history.append(detail)
     missing_person_details = {
@@ -90,7 +89,7 @@ def addPerson(request):
 def addTrackHistory(request):
     data = request.data
     missing_person = MissingPerson.objects.filter(id=data["id"]).first()
-    TrackHistory(missing_person=missing_person, latitude = data["latitude"], longitude = data["longitude"]).save()
+    TrackHistory(missing_person=missing_person, location = data["location"]).save()
     return Response("History updated", status=status.HTTP_200_OK)
 
 

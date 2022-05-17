@@ -1,0 +1,11 @@
+.add-missing-main {
+    display:flex;
+    margin: 0 25px 30px 0;
+}
+
+.add-missing-form {
+    background-color: white;
+    width:100%;
+    border-radius: 10px;
+    font-size: 15px;
+}
