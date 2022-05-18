@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
+import uuid
 from .models import MissingPerson, TrackHistory
 
 
@@ -28,7 +28,7 @@ def getAllPersons(request):
 @api_view(['GET'])
 def getPerson(request):
     data = request.data
-    missing_person = MissingPerson.objects.get(id = data["id"])
+    missing_person = MissingPerson.objects.filter(person_uuid = data["person_uuid"]).first()
     location = missing_person.trackhistory_set.all()
     print(location)
     track_history = []
@@ -79,8 +79,9 @@ def getStatistics(request):
 def addPerson(request):
     user = request.user
     data = request.data
-    MissingPerson(applicant_police_station=user, name = data["name"], age = data["age"], gender = data["gender"], isCriminal = data["isCriminal"], details = data["details"], applicant_email = data["applicant_email"]).save()
-    return Response("Person added", status=status.HTTP_200_OK)
+    person_uuid = uuid.uuid4()
+    MissingPerson(person_uuid = person_uuid, applicant_police_station=user, name = data["name"], age = data["age"], gender = data["gender"], isCriminal = data["isCriminal"], details = data["details"], applicant_email = data["applicant_email"]).save()
+    return Response(person_uuid, status=status.HTTP_200_OK)
 
 
 
@@ -88,8 +89,18 @@ def addPerson(request):
 @permission_classes([IsAuthenticated])
 def addTrackHistory(request):
     data = request.data
-    missing_person = MissingPerson.objects.filter(id=data["id"]).first()
+    missing_person = MissingPerson.objects.filter(person_uuid=data["person_uuid"]).first()
+    print(missing_person)
     TrackHistory(missing_person=missing_person, location = data["location"]).save()
+    return Response("History updated", status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def addTrackHistoryManually(request):
+    data = request.data
+    missing_person = MissingPerson.objects.filter(person_uuid=data["person_uuid"]).first()
+    print(missing_person)
+    TrackHistory(time_of_tracking=data["time_of_tracking"], missing_person=missing_person, location = data["location"]).save()
     return Response("History updated", status=status.HTTP_200_OK)
 
 
@@ -99,7 +110,7 @@ def addTrackHistory(request):
 def deletePerson(request):
     user = request.user
     data = request.data
-    missing_person = MissingPerson.objects.get(id = data["id"])
+    missing_person = MissingPerson.objects.filter(person_uuid=data["person_uuid"]).first()
     if user == missing_person.applicant_police_station:
         missing_person.delete()
         return Response("Person deleted", status=status.HTTP_200_OK)

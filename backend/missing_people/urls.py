@@ -6,6 +6,7 @@ urlpatterns = [
     path('get/person', views.getPerson, name='getPerson'),
     path('get/stats', views.getStatistics, name='getStats'),
     path('add/person', views.addPerson, name='addPerson'),
-    path('add/track-history', views.addTrackHistory, name='addTrackhistory')
+    path('add/track-history', views.addTrackHistory, name='addTrackhistory'),
+    path('add/track-history-manually', views.addTrackHistoryManually, name='addTrackhistoryManually')
 ]
 

@@ -13,6 +13,7 @@ GENDER_CHOICES = (
 )
 
 class MissingPerson(models.Model):
+    person_uuid = models.CharField(max_length=20, default="")
     applicant_police_station = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     image = models.ImageField(default='default.jpg', upload_to = 'missing_people')

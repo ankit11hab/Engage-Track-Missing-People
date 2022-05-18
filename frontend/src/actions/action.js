@@ -122,3 +122,36 @@ export const editPoliceStationDetails = (access_token, details) => async ( dispa
 
     return data;
 }
+
+
+export const addMissingPerson = (detail, access_token) => async (dispatch) => {
+    try {
+        console.log("here")
+        const config_header = {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+        };
+
+        const data = await axios.post(
+            `${config().url}/missing/add/person`,
+            detail.personal_details,
+            config_header
+        )
+        
+        const person_uuid = data.data;
+
+        detail.trackHistory.map(async (history)=>{
+            await axios.post(
+                `${config().url}/missing/add/track-history-manually`,
+                {...history,person_uuid},
+                config_header
+            )
+        })
+
+        return data;
+    }
+    catch (error) {
+        return { status: false };
+    }
+}
