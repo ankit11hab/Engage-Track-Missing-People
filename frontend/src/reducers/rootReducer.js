@@ -10,8 +10,7 @@ const initState = {
     isAuthenticated:  localStorage.getItem('authTokens')?(JSON.parse(localStorage.getItem('authTokens')).access):false,
     user: localStorage.getItem('authTokens')?JSON.parse(localStorage.getItem('authTokens')):null,
     police_station_details: {},
-    bookmarkedCompanies: [],
-    recentFilings: [],
+    allPersons: []
 }
 
 const rootReducer = (state=initState,action) => {
@@ -41,20 +40,14 @@ const rootReducer = (state=initState,action) => {
         }
     }
 
-    if(action.type==="GET_BOOKMARK_COMPANY"){
-        const newArr = action.bookmarkedCompanies;
+    if(action.type==='GET_ALL_PERSONS') {
+        const newArr = action.allPersons;
         return {
             ...state,
-            bookmarkedCompanies: newArr
+            allPersons: newArr
         }
     }
-    if(action.type==='GET_RECENT_FILINGS') {
-        const newArr = action.recentFilings;
-        return {
-            ...state,
-            recentFilings: newArr
-        }
-    }
+
     return state;
 }
 

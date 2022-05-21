@@ -4,6 +4,7 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
+import VideoCameraFrontOutlinedIcon from '@mui/icons-material/VideoCameraFrontOutlined';
 import { useLocation, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ReactTooltip from 'react-tooltip';
@@ -12,9 +13,9 @@ import ReactTooltip from 'react-tooltip';
 
 const listOptions = [
   { name: "Dashboard", link: "/", image: <HomeOutlinedIcon style={{ color: "rgb(222, 222, 222)" }} />, index: 1, type: "all" },
-  { name: "Missing People", link: "/missing-people", image: <PeopleOutlinedIcon />, index: 2, type: "all" },
-  { name: "Add Missing Person", link: "/add/missing-person", image: <PersonAddAltOutlinedIcon />, index: 3, type: "logged" },
-  { name: "Monitoring", link: "/adminmonitoring", image: <PeopleOutlinedIcon />, index: 4, type: "logged" },
+  { name: "Missing People", link: "/missing-people", image: <PeopleOutlinedIcon style={{ color: "rgb(222, 222, 222)" }} />, index: 2, type: "all" },
+  { name: "Add Missing Person", link: "/add/missing-person", image: <PersonAddAltOutlinedIcon style={{ color: "rgb(222, 222, 222)" }} />, index: 3, type: "logged" },
+  { name: "Monitoring", link: "/monitoring", image: <VideoCameraFrontOutlinedIcon style={{ color: "rgb(222, 222, 222)" }} />, index: 4, type: "logged" },
 ];
 
 const Navbar = () => {
@@ -33,6 +34,9 @@ const Navbar = () => {
         break;
       case '/add/missing-person':
         setSelectedIndex(3)
+        break;
+      case '/monitoring':
+        setSelectedIndex(4)
     }
     console.log(selectedIndex)
   })

@@ -4,32 +4,32 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import uuid
 from .models import MissingPerson, TrackHistory
+from authentication.models import CustomUser
+from django.conf import settings
 
 
 @api_view(['GET'])
 def getAllPersons(request):
     missing_person = MissingPerson.objects.all()
+    data = []
     for person in missing_person:
         missing_person_details = {
-            "id": person.id,
+            "person_uuid": person.person_uuid,
             "applicant_police_station": person.applicant_police_station.police_station_uid,
             "name": person.name,
-            "age": person.age,
-            "gender": person.gender,
-            "isCriminal": person.isCriminal,
-            "isTracked": person.isTracked,
-            "isFound": person.isFound,
             "details": person.details,
-            "applicant_email": person.applicant_email,
+            "image": settings.SERVER_URL+'media/'+person.image.name
         }
+        data.append(missing_person_details)
     
-    return Response(missing_person_details, status=status.HTTP_200_OK)
+    return Response(data, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
+@api_view(['POST'])
 def getPerson(request):
     data = request.data
     missing_person = MissingPerson.objects.filter(person_uuid = data["person_uuid"]).first()
-    location = missing_person.trackhistory_set.all()
+    police_station_details = CustomUser.objects.filter(police_station_uid = missing_person.applicant_police_station.police_station_uid).first()
+    location = missing_person.trackhistory_set.all().order_by("-time_of_tracking")
     print(location)
     track_history = []
     for item in location:
@@ -39,8 +39,11 @@ def getPerson(request):
         }
         track_history.append(detail)
     missing_person_details = {
-        "id": missing_person.id,
-        "applicant_police_station": missing_person.applicant_police_station.police_station_uid,
+        "person_uuid": missing_person.person_uuid,
+        "ps_uid": missing_person.applicant_police_station.police_station_uid,
+        "ps_location": police_station_details.location,
+        "ps_phone": police_station_details.phone,
+        "ps_email": police_station_details.email,
         "name": missing_person.name,
         "age": missing_person.age,
         "gender": missing_person.gender,
@@ -49,6 +52,7 @@ def getPerson(request):
         "isFound": missing_person.isFound,
         "details": missing_person.details,
         "applicant_email": missing_person.applicant_email,
+        "image": settings.SERVER_URL+'media/'+missing_person.image.name,
         "track_history": track_history
     }
     
@@ -80,7 +84,7 @@ def addPerson(request):
     user = request.user
     data = request.data
     person_uuid = uuid.uuid4()
-    MissingPerson(person_uuid = person_uuid, applicant_police_station=user, name = data["name"], age = data["age"], gender = data["gender"], isCriminal = data["isCriminal"], details = data["details"], applicant_email = data["applicant_email"]).save()
+    MissingPerson(person_uuid = person_uuid, applicant_police_station=user, name = data["name"], image=data['image'], age = data["age"], gender = data["gender"], isCriminal = data["isCriminal"], details = data["details"], applicant_email = data["applicant_email"]).save()
     return Response(person_uuid, status=status.HTTP_200_OK)
 
 

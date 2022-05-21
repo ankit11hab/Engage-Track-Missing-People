@@ -7,6 +7,7 @@ import { addMissingPerson } from '../actions/action';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import TextField from '@mui/material/TextField';
 import { useNavigate } from "react-router-dom";
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 const options = [
     { value: 'M', label: 'Male' },
@@ -55,6 +56,7 @@ const AddMissingPerson = () => {
     const [showError, setShowError] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [trackHistory, setTrackHistory] = useState([{ time_of_tracking: "", location: "" }]);
+    const [image, setImage] = useState(null);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -74,7 +76,8 @@ const AddMissingPerson = () => {
                     "details": about ? about : "-",
                     "gender": gender,
                     "applicant_email": email ? email : "-",
-                    "isCriminal": isCriminal
+                    "isCriminal": isCriminal === "on" ? "True" : "False",
+                    "image": image
                 },
                 trackHistory: trackHistory
             }
@@ -90,9 +93,9 @@ const AddMissingPerson = () => {
     const handleDateTimeChange = (index, val, type) => {
         let newArr = JSON.parse(JSON.stringify(trackHistory));
 
-        if(type==="datetime") 
+        if (type === "datetime")
             newArr[index].time_of_tracking = val;
-        if(type==="location") 
+        if (type === "location")
             newArr[index].location = val;
 
         setTrackHistory(newArr);
@@ -105,11 +108,29 @@ const AddMissingPerson = () => {
         setTrackHistory(newArr);
     }
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        const image_preview = document.getElementById('image-preview');
+        if(file) {
+            setImage(file);
+            const reader = new FileReader();
+            reader.addEventListener("load", () => {
+                image_preview.setAttribute("src", reader.result);
+            })
+
+            reader.readAsDataURL(file);
+        }
+    }
+
 
     return (
         <div>
-            <button onClick={()=>navigate(`/add/missing-person`)}>Click</button>
-            <div style={{ fontSize: "17px", margin: "0 0 15px 0" }}>Add a Missing Person</div>
+
+            <div style={{ display: "flex" }}>
+                <div style={{ fontSize: "17px", margin: "0 0 15px 0" }}>Add a Missing Person</div>
+                <div style={{ marginLeft: "25px" }}><button style={{ background: "white", border: "0.5px solid grey", padding: "2px 3px 0 3px", borderRadius: "4px", cursor: "pointer" }} onClick={() => navigate(`/refresh`)}><RefreshIcon style={{ width: "20px", fontWeight: "400", color: "rgb(102, 102, 102)" }} /></button></div>
+            </div>
+
             <div className='add-missing-main'>
                 <div className='add-missing-form'>
                     <div style={{ display: "flex", width: "100%" }}>
@@ -153,9 +174,12 @@ const AddMissingPerson = () => {
                     <div style={{ margin: "25px 50px 0 50px" }}>
                         <div>Photo</div>
                         <div style={{ marginTop: "20px", display: "flex", alignItems: "center" }}>
-                            <div><img src={Default} style={{ width: "75px", height: "75px", borderRadius: "50%", transform: "translate(-5px,0)" }} /></div>
+                            <div><img id="image-preview" src={Default} style={{ width: "75px", height: "75px", borderRadius: "50%", transform: "translate(-5px,0)" }} /></div>
                             <div>
-                                <button style={{ marginLeft: "30px", background: "white", border: "1px solid rgb(192, 192, 192)", outline: "none", cursor: "pointer", padding: "8px 12px 8px 12px", borderRadius: "5px", fontSize: "15px" }}>Change</button>
+                                <label for="image-upload" id="image-label">
+                                    Select Image
+                                    <input type="file" id="image-upload" accept="image/png, image/jpeg" onChange={handleImageChange} required />
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -201,12 +225,12 @@ const AddMissingPerson = () => {
                                         InputLabelProps={{
                                             shrink: true,
                                         }}
-                                        onChange={(e)=>handleDateTimeChange(index, e.target.value, "datetime")}
+                                        onChange={(e) => handleDateTimeChange(index, e.target.value, "datetime")}
                                     />
                                 </div>
                                 <div>
                                     Location
-                                    <input  onChange={(e)=>handleDateTimeChange(index, e.target.value, "location")} type="text" style={{ width: "100%", height: "33px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none", marginTop: "5px" }} />
+                                    <input onChange={(e) => handleDateTimeChange(index, e.target.value, "location")} type="text" style={{ width: "100%", height: "33px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none", marginTop: "5px" }} />
                                 </div>
                             </div>
                         )
@@ -215,10 +239,10 @@ const AddMissingPerson = () => {
                     <button onClick={addNewLocation} style={{ margin: "0 0 30px 93px", padding: "8px 13px 8px 13px", background: "#3f7bea", border: "none", outline: "none", color: "white", borderRadius: "5px", cursor: "pointer" }}>Add new location</button>
                     <div style={{ display: "flex" }}>
                         <div style={{ marginLeft: "auto", marginBottom: "30px" }}>
-                            <button style={{ background: "white", border: "1px solid rgb(192, 192, 192)", padding: "7px 12px 7px 12px", borderRadius: "5px", marginRight: "8px" }}>Cancel</button>
+                            <button onClick={() => navigate(`/refresh`)} style={{ background: "white", border: "1px solid rgb(192, 192, 192)", padding: "7px 12px 7px 12px", borderRadius: "5px", marginRight: "8px", cursor: "pointer" }}>Cancel</button>
                         </div>
                         <div>
-                            <button onClick={handleSubmit} style={{ background: "#3f7bea", color: "white", border: "1px solid rgb(192, 192, 192)", padding: "7px 12px 7px 12px", borderRadius: "5px", marginRight: "45px" }}>Save</button>
+                            <button onClick={handleSubmit} style={{ background: "#3f7bea", color: "white", border: "1px solid rgb(192, 192, 192)", padding: "7px 12px 7px 12px", borderRadius: "5px", marginRight: "45px", cursor: "pointer" }}>Save</button>
                         </div>
                     </div>
                 </div>

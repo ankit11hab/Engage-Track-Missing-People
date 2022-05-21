@@ -13,7 +13,7 @@ export const loginUser = (police_station_uid, password) => async (dispatch) => {
     try {
         const data = await axios.post(
             `${config().url}/auth/token/`,
-            {police_station_uid, password}
+            { police_station_uid, password }
         )
         if (data.status === 200) {
             dispatch({
@@ -69,13 +69,13 @@ setInterval(() => {
 }, 240000);
 
 
-export const getPoliceStationDetails = (access_token) => async ( dispatch) => {
+export const getPoliceStationDetails = (access_token) => async (dispatch) => {
     let data;
     try {
 
         const config_header = {
             headers: {
-              Authorization: `Bearer ${access_token}`,
+                Authorization: `Bearer ${access_token}`,
             },
         };
         const data = await axios.get(
@@ -98,13 +98,13 @@ export const getPoliceStationDetails = (access_token) => async ( dispatch) => {
 }
 
 
-export const editPoliceStationDetails = (access_token, details) => async ( dispatch) => {
+export const editPoliceStationDetails = (access_token, details) => async (dispatch) => {
     let data;
     try {
 
         const config_header = {
             headers: {
-              Authorization: `Bearer ${access_token}`,
+                Authorization: `Bearer ${access_token}`,
             },
         };
         const data = await axios.put(
@@ -129,23 +129,39 @@ export const addMissingPerson = (detail, access_token) => async (dispatch) => {
         console.log("here")
         const config_header = {
             headers: {
-              Authorization: `Bearer ${access_token}`,
+                Authorization: `Bearer ${access_token}`,
+                'content-type': 'multipart/form-data'
             },
         };
 
+        const config_header2 = {
+            headers: {
+                Authorization: `Bearer ${access_token}`
+            },
+        };
+
+        let form_data = new FormData();
+        form_data.append('image', detail.personal_details.image, detail.personal_details.image.name);
+        form_data.append('name', detail.personal_details.name);
+        form_data.append('age', detail.personal_details.age);
+        form_data.append('gender', detail.personal_details.gender);
+        form_data.append('isCriminal', detail.personal_details.isCriminal);
+        form_data.append('details', detail.personal_details.details);
+        form_data.append('applicant_email', detail.personal_details.applicant_email);
+
         const data = await axios.post(
             `${config().url}/missing/add/person`,
-            detail.personal_details,
+            form_data,
             config_header
         )
-        
+
         const person_uuid = data.data;
 
-        detail.trackHistory.map(async (history)=>{
+        detail.trackHistory.map(async (history) => {
             await axios.post(
                 `${config().url}/missing/add/track-history-manually`,
-                {...history,person_uuid},
-                config_header
+                { ...history, person_uuid },
+                config_header2
             )
         })
 
@@ -154,4 +170,51 @@ export const addMissingPerson = (detail, access_token) => async (dispatch) => {
     catch (error) {
         return { status: false };
     }
+}
+
+export const getAllPersons = () => async (dispatch) => {
+    let data;
+    try {
+        const data = await axios.get(
+            `${config().url}/missing/get/all-persons`
+        )
+        console.log("ok")
+        dispatch({
+            type: 'GET_ALL_PERSONS',
+            allPersons: data.data
+        });
+
+        console.log(data);
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+export const getPersonDetails = (person_uuid) => async (dispatch) => {
+    let data;
+    try {
+        const config_header = {
+            headers: {
+                'content-type': 'multipart/form-data'
+            },
+        };
+
+        const form_data = new FormData()
+        form_data.append(`person_uuid`, person_uuid)
+
+        const data = await axios.post(
+            `${config().url}/missing/get/person`,
+            form_data,
+            config_header
+        )
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
 }

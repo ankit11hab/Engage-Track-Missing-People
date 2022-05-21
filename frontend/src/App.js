@@ -11,6 +11,9 @@ import PrivateRoute from "./utils/PrivateRoute";
 import { useDispatch, useSelector } from 'react-redux';
 import { getPoliceStationDetails } from "./actions/action";
 import EditProfile from "./pages/user/EditProfile";
+import Refresh from "./components/Refresh";
+import PersonDetails from "./pages/PersonDetails";
+import Monitoring from "./pages/Monitoring";
 
 
 
@@ -37,8 +40,11 @@ function App() {
 					<Route exact path='/' element={<PrivateRoute />}>
 						<Route path="/edit-profile" element={<EditProfile />} />
 						<Route path="/add/missing-person" element={<AddMissingPerson />} />
+						<Route path="/refresh" element={<Refresh />} />
+						<Route path="/monitoring" element={<Monitoring />} />
 					</Route>
 					<Route path="/missing-people" element={<MissingPeople />} />
+					<Route path="/missing-people/:person_uuid" element={<PersonDetails />} />
 					<Route path="/login" element={<Login />} />
 				</Routes>
 			</BrowserRouter>

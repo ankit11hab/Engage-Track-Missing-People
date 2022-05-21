@@ -13,7 +13,7 @@ GENDER_CHOICES = (
 )
 
 class MissingPerson(models.Model):
-    person_uuid = models.CharField(max_length=20, default="")
+    person_uuid = models.CharField(max_length=100, default="")
     applicant_police_station = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     image = models.ImageField(default='default.jpg', upload_to = 'missing_people')
@@ -22,7 +22,7 @@ class MissingPerson(models.Model):
     isCriminal = models.BooleanField(default=False)
     isTracked = models.BooleanField(default=False)
     isFound = models.BooleanField(default=False)
-    details = models.TextField(max_length=300, default="")
+    details = models.TextField(max_length=1000, default="")
     applicant_email = models.EmailField(max_length=60,default="")
 
 

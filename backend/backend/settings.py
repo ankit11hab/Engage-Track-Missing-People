@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
     'authentication.apps.AuthenticationConfig',
-    'missing_people.apps.MissingPeopleConfig'
+    'missing_people.apps.MissingPeopleConfig',
+    'camera.apps.CameraConfig',
+    'channels'
 ]
 
 REST_FRAMEWORK = {
@@ -172,3 +174,13 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
+
+SERVER_URL = 'http://127.0.0.1:8000/'
+
+ASGI_APPLICATION = 'backend.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
