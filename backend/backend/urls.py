@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('authentication.urls')),
     path('missing/', include('missing_people.urls')),
+    path('camera/', include('camera.urls')),
 ]
 
 if settings.DEBUG:

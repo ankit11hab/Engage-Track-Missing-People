@@ -4,6 +4,9 @@ import cv2
 import PIL.Image as Image
 import io
 import numpy as np
+from .models import CameraRecord
+import base64
+from asgiref.sync import sync_to_async
 
 
 class CameraConsumer(AsyncWebsocketConsumer):
@@ -22,9 +25,14 @@ class CameraConsumer(AsyncWebsocketConsumer):
         }))
 
 
-    async def receive(self, bytes_data):
-        img = Image.open(io.BytesIO(bytes_data))
-        img.show()
+    async def receive(self, text_data):
+        # print(text_data)
+
+        nparr = np.fromstring(base64.b64decode(text_data), np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+        # img = Image.open(io.BytesIO(bytes_data))
+        # img.show()
         # nparr = np.fromstring(bytes_data, np.uint8).reshape( h, w, nb_planes )
         # img = cv2.imdecode(nparr, flags=1)
         # cv2.imwrite('./0.jpg', img)
@@ -36,13 +44,13 @@ class CameraConsumer(AsyncWebsocketConsumer):
 
         # cv2.imshow("Image",bytes_data)
 
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'send.message',
-                'message': self.channel_name
-            }
-        )
+        # await self.channel_layer.group_send(
+        #     self.room_group_name,
+        #     {
+        #         'type': 'send.message',
+        #         'message': self.channel_name
+        #     }
+        # )
 
 
 
@@ -51,6 +59,9 @@ class CameraConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+
+        cameraRecord = await sync_to_async(CameraRecord.objects.get)(channel_name=self.channel_name)
+        await sync_to_async(cameraRecord.delete)()
 
     
     # async def send_message(self, event):

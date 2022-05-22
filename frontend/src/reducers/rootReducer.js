@@ -40,7 +40,7 @@ const rootReducer = (state=initState,action) => {
         }
     }
 
-    if(action.type==='GET_ALL_PERSONS') {
+    if(action.type==='GET_PERSONS') {
         const newArr = action.allPersons;
         return {
             ...state,

@@ -172,6 +172,22 @@ export const addMissingPerson = (detail, access_token) => async (dispatch) => {
     }
 }
 
+export const getStats = () => async (dispatch) => {
+    let data;
+    try {
+        const data = await axios.get(
+            `${config().url}/missing/get/stats`
+        )
+        console.log(data);
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
 export const getAllPersons = () => async (dispatch) => {
     let data;
     try {
@@ -180,11 +196,87 @@ export const getAllPersons = () => async (dispatch) => {
         )
         console.log("ok")
         dispatch({
-            type: 'GET_ALL_PERSONS',
+            type: 'GET_PERSONS',
             allPersons: data.data
         });
 
         console.log(data);
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+export const getAllCriminals = () => async (dispatch) => {
+    let data;
+    try {
+        const data = await axios.get(
+            `${config().url}/missing/get/all-criminals`
+        )
+        console.log("ok")
+        dispatch({
+            type: 'GET_PERSONS',
+            allPersons: data.data
+        });
+
+        console.log(data);
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+
+export const getAllNonCriminals = () => async (dispatch) => {
+    let data;
+    try {
+        const data = await axios.get(
+            `${config().url}/missing/get/all-non-criminals`
+        )
+        console.log("ok")
+        dispatch({
+            type: 'GET_PERSONS',
+            allPersons: data.data
+        });
+
+        console.log(data);
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+
+export const getAllAppliedHere = (access_token) => async (dispatch) => {
+    let data;
+    try {
+        const config_header = {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        };
+
+        const data = await axios.get(
+            `${config().url}/missing/get/all-applied-from-here`,
+            config_header
+        )
+        console.log("ok")
+        dispatch({
+            type: 'GET_PERSONS',
+            allPersons: data.data
+        });
+
+        console.log(data);
+        return data;
     }
     catch (err) {
         console.log("Error:", err);
@@ -208,6 +300,30 @@ export const getPersonDetails = (person_uuid) => async (dispatch) => {
         const data = await axios.post(
             `${config().url}/missing/get/person`,
             form_data,
+            config_header
+        )
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+
+export const addCameraRecord = (details, access_token) => async (dispatch) => {
+    let data;
+    try {
+        const config_header = {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        };
+
+        const data = await axios.post(
+            `${config().url}/camera/camera-record`,
+            details,
             config_header
         )
         return data;

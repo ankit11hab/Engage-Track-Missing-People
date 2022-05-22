@@ -6,11 +6,63 @@ import uuid
 from .models import MissingPerson, TrackHistory
 from authentication.models import CustomUser
 from django.conf import settings
+import datetime
 
 
 @api_view(['GET'])
 def getAllPersons(request):
     missing_person = MissingPerson.objects.all()
+    data = []
+    for person in missing_person:
+        missing_person_details = {
+            "person_uuid": person.person_uuid,
+            "applicant_police_station": person.applicant_police_station.police_station_uid,
+            "name": person.name,
+            "details": person.details,
+            "image": settings.SERVER_URL+'media/'+person.image.name
+        }
+        data.append(missing_person_details)
+    
+    return Response(data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def getAllCriminals(request):
+    missing_person = MissingPerson.objects.filter(isCriminal=True)
+    data = []
+    for person in missing_person:
+        missing_person_details = {
+            "person_uuid": person.person_uuid,
+            "applicant_police_station": person.applicant_police_station.police_station_uid,
+            "name": person.name,
+            "details": person.details,
+            "image": settings.SERVER_URL+'media/'+person.image.name
+        }
+        print(missing_person_details)
+        data.append(missing_person_details)
+    
+    return Response(data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def getAllNonCriminals(request):
+    missing_person = MissingPerson.objects.filter(isCriminal=False)
+    data = []
+    for person in missing_person:
+        missing_person_details = {
+            "person_uuid": person.person_uuid,
+            "applicant_police_station": person.applicant_police_station.police_station_uid,
+            "name": person.name,
+            "details": person.details,
+            "image": settings.SERVER_URL+'media/'+person.image.name
+        }
+        data.append(missing_person_details)
+    
+    return Response(data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getAllAppliedFromHere(request):
+    user = request.user
+    missing_person = MissingPerson.objects.filter(applicant_police_station=user)
     data = []
     for person in missing_person:
         missing_person_details = {
@@ -63,17 +115,28 @@ def getPerson(request):
 def getStatistics(request):
     missing_person = MissingPerson.objects.all()
     number_of_persons_tracked = number_of_persons_found = count = 0
+    number_of_persons_tracked_today = number_of_persons_found_today = number_of_persons_missing_today = count_today = 0
     for person in missing_person:
+        if person.time_of_addition.date() == datetime.datetime.now().date():
+            count_today+=1
         if person.isTracked:
             number_of_persons_tracked+=1
+            if person.time_of_first_tracking.date() == datetime.datetime.now().date():
+                number_of_persons_tracked_today += 1
         if person.isFound:
             number_of_persons_found+=1
+            if person.time_of_found.date() == datetime.datetime.now().date():
+                number_of_persons_found_today += 1
         count+=1
-    number_of_persons_missing = count - number_of_persons_found - number_of_persons_tracked
+    number_of_persons_missing = count - number_of_persons_found
+    number_of_persons_missing_today = count_today - number_of_persons_found_today
     stats = {
         "missing":number_of_persons_missing,
         "tracked":number_of_persons_tracked,
-        "found":number_of_persons_found
+        "found":number_of_persons_found,
+        "missing_today": number_of_persons_missing_today,
+        "tracked_today": number_of_persons_tracked_today,
+        "found_today": number_of_persons_found_today
     }
     
     return Response(stats, status=status.HTTP_200_OK)
@@ -94,7 +157,11 @@ def addPerson(request):
 def addTrackHistory(request):
     data = request.data
     missing_person = MissingPerson.objects.filter(person_uuid=data["person_uuid"]).first()
-    print(missing_person)
+    if missing_person.isTracked==False:
+        missing_person.isTracked = True
+    if missing_person.time_of_first_tracking==None:
+        missing_person.time_of_first_tracking = datetime.datetime.now()
+    missing_person.save()
     TrackHistory(missing_person=missing_person, location = data["location"]).save()
     return Response("History updated", status=status.HTTP_200_OK)
 

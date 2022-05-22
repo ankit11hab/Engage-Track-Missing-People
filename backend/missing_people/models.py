@@ -1,7 +1,10 @@
 from email.policy import default
+from typing_extensions import Required
 from django.db import models
 from django.contrib.auth  import get_user_model
 import datetime
+
+from authentication.models import CustomUser
 
 User = get_user_model()
 
@@ -24,6 +27,9 @@ class MissingPerson(models.Model):
     isFound = models.BooleanField(default=False)
     details = models.TextField(max_length=1000, default="")
     applicant_email = models.EmailField(max_length=60,default="")
+    time_of_addition = models.DateTimeField(default=datetime.datetime.now())
+    time_of_first_tracking = models.DateTimeField(default=None, null=True)
+    time_of_found = models.DateTimeField(default=None, null=True)
 
 
     def __str__(self):
@@ -37,3 +43,14 @@ class TrackHistory(models.Model):
 
     def __str__(self):
         return f"{self.missing_person.name} | {self.time_of_tracking}"
+
+
+
+class Notifications(models.Model):
+    police_station = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    message = models.CharField(max_length=200, default="")
+    time = models.DateTimeField(default=datetime.datetime.now())
+    seen = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.message
