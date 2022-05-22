@@ -7,6 +7,36 @@ import numpy as np
 from .models import CameraRecord
 import base64
 from asgiref.sync import sync_to_async
+from missing_people.models import MissingPerson
+import os
+from django.conf import settings
+from missing_people.views import get_face_names_and_encodings
+
+
+# known_face_encodings = []
+# known_face_names = []
+
+# modi_image = face_recognition.load_image_file("images/ma.jpeg")
+# modi_face_encoding = face_recognition.face_encodings(modi_image)[0]
+
+# img = cv2.imread(os.path.join(settings.MEDIA_ROOT, 'Osama_bin_Laden_portrait.jpg'))
+# print(os.path.join(settings.MEDIA_ROOT, 'Osama_bin_Laden_portrait.jpg'))
+# cv2.imshow("Image", img)
+
+# img = cv2.imread('media\missing_people\Osama_bin_Laden_portrait.jpg', 0)
+# cv2.imshow("Img",img)
+# cv2.waitKey(0)
+
+# def addNewPerson():
+
+
+# missing_persons = MissingPerson.objects.all()
+# for person in missing_persons:
+#     print(person.image)
+
+    #image = np.asarray(bytearray(person.image.read()), dtype="uint8")
+    #image_encode = cv2.imdecode(image, cv2.IMREAD_UNCHANGED)
+    #cv2.imshow("Image" ,image_encode)
 
 
 class CameraConsumer(AsyncWebsocketConsumer):
@@ -26,31 +56,33 @@ class CameraConsumer(AsyncWebsocketConsumer):
 
 
     async def receive(self, text_data):
-        # print(text_data)
+        known_face_names, known_face_encodings, face_recognition = get_face_names_and_encodings()
+        image = text_data  
+        decoded_data = base64.b64decode(image)
+        np_data = np.fromstring(decoded_data,np.uint8)
+        original_image = image_to_recognize = cv2.imdecode(np_data,cv2.IMREAD_UNCHANGED)
+        all_face_locations = face_recognition.face_locations(image_to_recognize,model="hog")
+        all_face_encodings = face_recognition.face_encodings(image_to_recognize,all_face_locations)
+        # print(len(all_face_locations))
 
-        nparr = np.fromstring(base64.b64decode(text_data), np.uint8)
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-        # img = Image.open(io.BytesIO(bytes_data))
-        # img.show()
-        # nparr = np.fromstring(bytes_data, np.uint8).reshape( h, w, nb_planes )
-        # img = cv2.imdecode(nparr, flags=1)
-        # cv2.imwrite('./0.jpg', img)
-        # img_np = cv2.imdecode(nparr, cv2.CV_LOAD_IMAGE_COLOR)
-        # cv2.imshow("Image" ,img)
-
-        #original_image = cv2.imread(img)
-        #cv2.imshow("Image", img)
-
-        # cv2.imshow("Image",bytes_data)
-
-        # await self.channel_layer.group_send(
-        #     self.room_group_name,
-        #     {
-        #         'type': 'send.message',
-        #         'message': self.channel_name
-        #     }
-        # )
+        for current_face_location, current_face_encoding in zip(all_face_locations, all_face_encodings):
+            top_pos,right_pos,bottom_pos,left_pos = current_face_location
+            print("Top: {}, Right: {}, Bottom: {}, Left: {}".format(top_pos,right_pos,bottom_pos,left_pos))
+            #current_face_image = image_to_detect[top_pos:bottom_pos,left_pos:right_pos]
+            all_matches = face_recognition.compare_faces(known_face_encodings,current_face_encoding)
+            name_of_person = "Unknown name"
+            if True in all_matches:
+                first_match_index = all_matches.index(True)
+                name_of_person = known_face_names[first_match_index]
+            cv2.rectangle(original_image, (left_pos-14, top_pos-14), (right_pos+14, bottom_pos+14), (0,0,255), 1)
+            cv2.line(original_image, (left_pos-9, top_pos-9), (left_pos+9, top_pos-9), (0,0,255), 1)
+            cv2.line(original_image, (left_pos-9, top_pos-9), (left_pos-9, top_pos+9), (0,0,255), 1)
+            cv2.line(original_image, (right_pos-9, bottom_pos+9), (right_pos+9, bottom_pos+9), (0,0,255), 1)
+            cv2.line(original_image, (right_pos+9, bottom_pos-9), (right_pos+9, bottom_pos+9), (0,0,255), 1)
+            font = cv2.FONT_HERSHEY_DUPLEX
+            cv2.putText(original_image,name_of_person,(left_pos,bottom_pos), font, 0.5, (0,0,255),1)
+        cv2.imshow("Face Recognized", original_image)
+        cv2.waitKey()
 
 
 

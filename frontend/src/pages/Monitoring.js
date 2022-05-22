@@ -128,30 +128,23 @@ const Monitoring = () => {
         let ctx = photo.getContext('2d');
         ctx.drawImage(video, 0, 0, width, height);
 
-        const data = JSON.stringify(photo.toDataURL("image/jpeg"));
+        const data = JSON.stringify(photo.toDataURL("image/jpeg")).split(',')[1];
         // const newData = data.substr
-        console.log(data.split(',')[1]);
-        client.send(data.split(',')[1]);
+        client.send(data);
     }
 
 
     return (
         <div>
             <div>
-                <button onClick={handleConnect}>Connect</button>
-                <button onClick={handleOpenVideo}>Open video</button>
-                <button onClick={handleStopVideo}>Stop Video</button>
-                <button onClick={takePicture}>Take a photo</button>
-                <div id="messages">
-
+                <div>
+                    <button onClick={handleConnect}>Connect</button>
+                    <button onClick={handleOpenVideo}>Open video</button>
+                    <button onClick={handleStopVideo}>Stop Video</button>
+                    <button onClick={takePicture}>Take a photo</button>
                 </div>
-                <form style={{ marginTop: "auto" }} id='chat-form' onSubmit={handleSubmit}>
-                    <input type='text' name='message' />
-                    <input type='file' onChange={handleFileChange} />
-                    <button type="button" onClick={handleSendImage}>Send</button>
-                </form>
                 <div style={{display:"flex", width:"100%"}}>
-                    <div style={{width:"50%"}}><video ref={videoRef} /></div>
+                    <div style={{width:"30%"}}><video ref={videoRef} /></div>
                     <div style={{width:"50%"}}><canvas ref={photoRef}></canvas></div>
                 </div>
                 

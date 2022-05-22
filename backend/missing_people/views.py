@@ -7,6 +7,26 @@ from .models import MissingPerson, TrackHistory
 from authentication.models import CustomUser
 from django.conf import settings
 import datetime
+import cv2
+import face_recognition
+
+known_face_encodings = []
+known_face_names = []
+
+missing_persons_for_encodings = MissingPerson.objects.all()
+for person in missing_persons_for_encodings:
+    path = "media/"+str(person.image)
+    image = face_recognition.load_image_file(path)
+    try:
+        face_encoding = face_recognition.face_encodings(image)[0]
+        known_face_encodings.append(face_encoding)
+        known_face_names.append(person.name)
+    except IndexError as e:
+        print(e)
+
+
+def get_face_names_and_encodings():
+    return (known_face_names, known_face_encodings, face_recognition)
 
 
 @api_view(['GET'])
@@ -147,7 +167,16 @@ def addPerson(request):
     user = request.user
     data = request.data
     person_uuid = uuid.uuid4()
+    print("name",data['image'].name)
     MissingPerson(person_uuid = person_uuid, applicant_police_station=user, name = data["name"], image=data['image'], age = data["age"], gender = data["gender"], isCriminal = data["isCriminal"], details = data["details"], applicant_email = data["applicant_email"]).save()
+    path = "media/missing_people/"+data['image'].name
+    image = face_recognition.load_image_file(path)
+    try:
+        face_encoding = face_recognition.face_encodings(image)[0]
+        known_face_encodings.append(face_encoding)
+        known_face_names.append(data["name"])
+    except IndexError as e:
+        print(e)
     return Response(person_uuid, status=status.HTTP_200_OK)
 
 
