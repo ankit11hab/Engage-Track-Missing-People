@@ -33,20 +33,28 @@ function App() {
 	return (
 		<div className="App">
 			<BrowserRouter>
-				<Navbar />
-				<Header />
-				<Routes>
-					<Route path="/" element={<Dashboard />} />
-					<Route exact path='/' element={<PrivateRoute />}>
-						<Route path="/edit-profile" element={<EditProfile />} />
-						<Route path="/add/missing-person" element={<AddMissingPerson />} />
-						<Route path="/refresh" element={<Refresh />} />
-						<Route path="/monitoring" element={<Monitoring />} />
-					</Route>
-					<Route path="/missing-people" element={<MissingPeople />} />
-					<Route path="/missing-people/:person_uuid" element={<PersonDetails />} />
-					<Route path="/login" element={<Login />} />
-				</Routes>
+				<div style={{display:"flex", width:"100%", height:"100vh"}}>
+					<div>
+						<Navbar />
+					</div>
+					<div style={{width:"100%", flexGrow:"1", overflowY:"scroll"}}>
+						<Header />
+						<div style={{marginLeft:"25px"}}>
+							<Routes>
+								<Route path="/" element={<Dashboard />} />
+								<Route exact path='/' element={<PrivateRoute />}>
+									<Route path="/edit-profile" element={<EditProfile />} />
+									<Route path="/add/missing-person" element={<AddMissingPerson />} />
+									<Route path="/refresh" element={<Refresh />} />
+									<Route path="/monitoring" element={<Monitoring />} />
+								</Route>
+								<Route path="/missing-people" element={<MissingPeople />} />
+								<Route path="/missing-people/:person_uuid" element={<PersonDetails />} />
+								<Route path="/login" element={<Login />} />
+							</Routes>
+						</div>
+					</div>
+				</div>
 			</BrowserRouter>
 		</div>
 	);

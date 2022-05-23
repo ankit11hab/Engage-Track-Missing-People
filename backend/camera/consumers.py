@@ -1,42 +1,11 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 import cv2
-import PIL.Image as Image
-import io
 import numpy as np
 from .models import CameraRecord
 import base64
 from asgiref.sync import sync_to_async
-from missing_people.models import MissingPerson
-import os
-from django.conf import settings
 from missing_people.views import get_face_names_and_encodings
-
-
-# known_face_encodings = []
-# known_face_names = []
-
-# modi_image = face_recognition.load_image_file("images/ma.jpeg")
-# modi_face_encoding = face_recognition.face_encodings(modi_image)[0]
-
-# img = cv2.imread(os.path.join(settings.MEDIA_ROOT, 'Osama_bin_Laden_portrait.jpg'))
-# print(os.path.join(settings.MEDIA_ROOT, 'Osama_bin_Laden_portrait.jpg'))
-# cv2.imshow("Image", img)
-
-# img = cv2.imread('media\missing_people\Osama_bin_Laden_portrait.jpg', 0)
-# cv2.imshow("Img",img)
-# cv2.waitKey(0)
-
-# def addNewPerson():
-
-
-# missing_persons = MissingPerson.objects.all()
-# for person in missing_persons:
-#     print(person.image)
-
-    #image = np.asarray(bytearray(person.image.read()), dtype="uint8")
-    #image_encode = cv2.imdecode(image, cv2.IMREAD_UNCHANGED)
-    #cv2.imshow("Image" ,image_encode)
 
 
 class CameraConsumer(AsyncWebsocketConsumer):

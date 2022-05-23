@@ -10,6 +10,8 @@ urlpatterns = [
     path('get/stats', views.getStatistics, name='getStats'),
     path('add/person', views.addPerson, name='addPerson'),
     path('add/track-history', views.addTrackHistory, name='addTrackhistory'),
-    path('add/track-history-manually', views.addTrackHistoryManually, name='addTrackhistoryManually')
+    path('add/track-history-manually', views.addTrackHistoryManually, name='addTrackhistoryManually'),
+    path('delete/person', views.deletePerson, name='deletePerson'),
+    path('edit/person', views.editPerson, name='editPerson')
 ]
 

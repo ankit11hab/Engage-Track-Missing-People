@@ -128,7 +128,7 @@ const AddMissingPerson = () => {
 
             <div style={{ display: "flex" }}>
                 <div style={{ fontSize: "17px", margin: "0 0 15px 0" }}>Add a Missing Person</div>
-                <div style={{ marginLeft: "25px" }}><button style={{ background: "white", border: "0.5px solid grey", padding: "2px 3px 0 3px", borderRadius: "4px", cursor: "pointer" }} onClick={() => navigate(`/refresh`)}><RefreshIcon style={{ width: "20px", fontWeight: "400", color: "rgb(102, 102, 102)" }} /></button></div>
+                <div style={{ marginLeft: "25px" }}><button style={{ background: "white", border: "0.1px solid rgb(230,230,230)", padding: "2px 3px 0 3px", borderRadius: "4px", cursor: "pointer" }} onClick={() => navigate(`/refresh`)}><RefreshIcon style={{ width: "20px", fontWeight: "400", color: "rgb(102, 102, 102)" }} /></button></div>
             </div>
 
             <div className='add-missing-main'>

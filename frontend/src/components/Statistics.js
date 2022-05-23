@@ -5,6 +5,64 @@ import HowToRegOutlinedIcon from '@mui/icons-material/HowToRegOutlined';
 import { useDispatch } from 'react-redux';
 import { getStats } from '../actions/action';
 import { CircularProgress } from '@mui/material';
+import { Line } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+);
+
+
+const options = {
+    responsive: true,
+    plugins: {
+        legend: {
+            display: false,
+            position: 'bottom',
+        },
+        title: {
+            display: false,
+            text: 'Chart.js Line Chart',
+        },
+    },
+    maintainAspectRatio: false
+};
+
+const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+
+const data = {
+    labels,
+    datasets: [
+        {
+            label: 'Dataset 1',
+            data: [1, 5, 3, 6, 4],
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+        {
+            label: 'Dataset 2',
+            data: [2, 3, 1, 5, 4],
+            borderColor: 'rgb(53, 162, 235)',
+            backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        },
+    ],
+};
+
 
 const Statistics = () => {
     const dispatch = useDispatch();
@@ -26,7 +84,7 @@ const Statistics = () => {
         <div>
             {
                 isLoading ?
-                    <div><CircularProgress size={20} style={{margin:"8px 14px 9px 0"}} /></div>
+                    <div><CircularProgress size={20} style={{ margin: "8px 14px 9px 0" }} /></div>
                     :
                     <div>
                         <div style={{ fontSize: "17px", margin: "0 0 15px 0" }}>Statistics</div>
@@ -64,7 +122,7 @@ const Statistics = () => {
                                                 Persons Tracked
                                             </div>
                                             <div style={{ fontSize: "20px", fontWeight: "500" }}>
-                                            {stats.tracked} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.tracked_today}↑</span>
+                                                {stats.tracked} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.tracked_today}↑</span>
                                             </div>
                                         </div>
                                     </div>
@@ -84,7 +142,7 @@ const Statistics = () => {
                                                 Persons Found
                                             </div>
                                             <div style={{ fontSize: "20px", fontWeight: "500" }}>
-                                            {stats.found} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.found_today}↑</span>
+                                                {stats.found} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.found_today}↑</span>
                                             </div>
                                         </div>
                                     </div>
@@ -92,6 +150,21 @@ const Statistics = () => {
                                         View all
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "space-between", margin: "0 25px 0 0" }}>
+                            <div className='graph-card' style={{ width: "66%", display:"flex", flexDirection:"column", alignItems:"center" }}>
+
+                                <div style={{ padding: "20px 24px 0 24px", maxHeight:"200px", width:"92%" }}>
+                                    <Line options={options} data={data} />
+                                </div>
+                                <div style={{marginTop:"25px", display:"flex", fontSize:"12px"}}>
+                                    KJnl
+                                </div>
+                            </div>
+                            <div className='graph-card' style={{ width: "32%", display:"flex", flexDirection:"column", alignItems:"center" }}>
+
+                                
                             </div>
                         </div>
                     </div>

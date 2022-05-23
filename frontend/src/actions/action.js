@@ -172,6 +172,28 @@ export const addMissingPerson = (detail, access_token) => async (dispatch) => {
     }
 }
 
+export const addTrackHistory = (detail, access_token) => async (dispatch) => {
+    try {
+
+        const config_header2 = {
+            headers: {
+                Authorization: `Bearer ${access_token}`
+            },
+        };
+
+        const data = await axios.post(
+            `${config().url}/missing/add/track-history-manually`,
+            { time_of_tracking: detail.time_of_tracking, location: detail.location, person_uuid: detail.person_uuid },
+            config_header2
+        )
+
+        return data;
+    }
+    catch (error) {
+        return { status: false };
+    }
+}
+
 export const getStats = () => async (dispatch) => {
     let data;
     try {
@@ -326,6 +348,47 @@ export const addCameraRecord = (details, access_token) => async (dispatch) => {
             details,
             config_header
         )
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+export const deletePerson =
+    (person_uuid, access_token) => async (dispatch, getState) => {
+        try {
+
+            const headers = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${access_token}`,
+            };
+
+            await axios.delete(
+                `${config().url}/missing/delete/person`,
+                { data: { person_uuid }, headers }
+            );
+        } catch (error) { }
+    };
+
+export const editPersonDetails = (access_token, details) => async (dispatch) => {
+    let data;
+    try {
+
+        const config_header = {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        };
+        const data = await axios.put(
+            `${config().url}/missing/edit/person`,
+            details,
+            config_header
+        )
+
+
         return data;
     }
     catch (err) {

@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import uuid
 from .models import MissingPerson, TrackHistory
+from camera.models import CameraRecord, CapturedImages
 from authentication.models import CustomUser
 from django.conf import settings
 import datetime
@@ -134,6 +135,17 @@ def getPerson(request):
 @api_view(['GET'])
 def getStatistics(request):
     missing_person = MissingPerson.objects.all()
+    police_stations = CustomUser.objects.all()
+    ps_count = police_stations.count()
+    camera_records = CameraRecord.objects.all().count()
+    captured_images = CapturedImages.objects.all().count()
+    max_ps_missing = 0
+    ps_missing = ""
+    for station in police_stations:
+        count = station.missingperson_set.all().count()
+        if count>max_ps_missing:
+            max_ps_missing = count
+            ps_missing = station.police_station_uid
     number_of_persons_tracked = number_of_persons_found = count = 0
     number_of_persons_tracked_today = number_of_persons_found_today = number_of_persons_missing_today = count_today = 0
     for person in missing_person:
@@ -156,7 +168,13 @@ def getStatistics(request):
         "found":number_of_persons_found,
         "missing_today": number_of_persons_missing_today,
         "tracked_today": number_of_persons_tracked_today,
-        "found_today": number_of_persons_found_today
+        "found_today": number_of_persons_found_today,
+        "police_station_count": ps_count,
+        "camera_count": camera_records,
+        "image_count": captured_images,
+        "most_active_ps": ps_missing,
+        "missing_most_active_ps": max_ps_missing
+
     }
     
     return Response(stats, status=status.HTTP_200_OK)
@@ -221,21 +239,23 @@ def deletePerson(request):
 def editPerson(request):
     user = request.user
     data = request.data
-    missing_person = MissingPerson.objects.get(id = data["id"])
+    missing_person = MissingPerson.objects.filter(person_uuid=data["person_uuid"]).first()
     if(user==missing_person.applicant_police_station):
-        if data["name"]:
+        if "name" in data:
             missing_person.name = data["name"]
-        if data["age"]:
+        if "age" in data:
             missing_person.age = data["age"]
-        if data["gender"]:
+        if "gender" in data:
             missing_person.gender = data["gender"]
-        if data["isCriminal"]:
+        if "isCriminal" in data:
             missing_person.isCriminal = data["isCriminal"]
-        if data["isTracked"]:
+        if "isTracked" in data:
             missing_person.isTracked = data["isTracked"]
-        if data["details"]:
+        if "isFound" in data:
+            missing_person.isFound = data["isFound"]
+        if "details" in data:
             missing_person.details = data["details"]
-        if data["applicant_email"]:
+        if "applicant_email" in data:
             missing_person.applicant_email = data["applicant_email"]
         missing_person.save()
         return Response("Person detail edited", status=status.HTTP_200_OK)
