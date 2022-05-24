@@ -21,4 +21,4 @@ def addCapturedImages(request):
     data = request.data
     camera = CameraRecord.objects.get(channel_name=data['channel_name'])
     CapturedImages(camera=camera, image=data['image']).save()
-    return Response("Camera has been added to database", status=status.HTTP_200_OK)
+    return Response("Image has been added to database", status=status.HTTP_200_OK)

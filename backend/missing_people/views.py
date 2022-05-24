@@ -13,6 +13,7 @@ import face_recognition
 
 known_face_encodings = []
 known_face_names = []
+known_face_uuids = []
 
 missing_persons_for_encodings = MissingPerson.objects.all()
 for person in missing_persons_for_encodings:
@@ -22,12 +23,13 @@ for person in missing_persons_for_encodings:
         face_encoding = face_recognition.face_encodings(image)[0]
         known_face_encodings.append(face_encoding)
         known_face_names.append(person.name)
+        known_face_uuids.append(person.person_uuid)
     except IndexError as e:
         print(e)
 
 
 def get_face_names_and_encodings():
-    return (known_face_names, known_face_encodings, face_recognition)
+    return (known_face_names, known_face_encodings, known_face_uuids, face_recognition)
 
 
 @api_view(['GET'])
@@ -147,33 +149,52 @@ def getStatistics(request):
             max_ps_missing = count
             ps_missing = station.police_station_uid
     number_of_persons_tracked = number_of_persons_found = count = 0
-    number_of_persons_tracked_today = number_of_persons_found_today = number_of_persons_missing_today = count_today = 0
+    number_of_persons_enlisted_daywise = [0,0,0,0,0,0,0]
+    number_of_persons_found_daywise = [0,0,0,0,0,0,0]
+    number_of_persons_tracked_daywise = [0,0,0,0,0,0,0]
+    # for person in missing_person:
+    #     print((datetime.datetime.now().date() - person.time_of_addition.date()).days)
+    #     if person.time_of_addition.date() == datetime.datetime.now().date():
+    #         count_today+=1
+    #     if person.isTracked:
+    #         number_of_persons_tracked+=1
+    #         if person.time_of_first_tracking.date() == datetime.datetime.now().date():
+    #             number_of_persons_tracked_today += 1
+    #     if person.isFound:
+    #         number_of_persons_found+=1
+    #         if person.time_of_found.date() == datetime.datetime.now().date():
+    #             number_of_persons_found_today += 1
+    #     count+=1
     for person in missing_person:
-        if person.time_of_addition.date() == datetime.datetime.now().date():
-            count_today+=1
+        day_diff = (datetime.datetime.now().date() - person.time_of_addition.date()).days
+        if day_diff<=7:
+            number_of_persons_enlisted_daywise[day_diff] += 1
         if person.isTracked:
             number_of_persons_tracked+=1
-            if person.time_of_first_tracking.date() == datetime.datetime.now().date():
-                number_of_persons_tracked_today += 1
+            if (datetime.datetime.now().date() - person.time_of_first_tracking.date()).days<=7:
+                number_of_persons_tracked_daywise[(datetime.datetime.now().date() - person.time_of_first_tracking.date()).days] += 1
         if person.isFound:
             number_of_persons_found+=1
-            if person.time_of_found.date() == datetime.datetime.now().date():
-                number_of_persons_found_today += 1
+            if (datetime.datetime.now().date() - person.time_of_found.date()).days<=7:
+                number_of_persons_found_daywise[(datetime.datetime.now().date() - person.time_of_found.date()).days] += 1
         count+=1
+        
+
+
     number_of_persons_missing = count - number_of_persons_found
-    number_of_persons_missing_today = count_today - number_of_persons_found_today
     stats = {
         "missing":number_of_persons_missing,
+        "enlisted": count,
         "tracked":number_of_persons_tracked,
         "found":number_of_persons_found,
-        "missing_today": number_of_persons_missing_today,
-        "tracked_today": number_of_persons_tracked_today,
-        "found_today": number_of_persons_found_today,
+        "enlisted_daywise": number_of_persons_enlisted_daywise,
+        "tracked_daywise": number_of_persons_tracked_daywise,
+        "found_daywise": number_of_persons_found_daywise,
         "police_station_count": ps_count,
         "camera_count": camera_records,
         "image_count": captured_images,
         "most_active_ps": ps_missing,
-        "missing_most_active_ps": max_ps_missing
+        "enlisted_most_active_ps": max_ps_missing
 
     }
     
@@ -193,6 +214,7 @@ def addPerson(request):
         face_encoding = face_recognition.face_encodings(image)[0]
         known_face_encodings.append(face_encoding)
         known_face_names.append(data["name"])
+        known_face_uuids.append(person_uuid)
     except IndexError as e:
         print(e)
     return Response(person_uuid, status=status.HTTP_200_OK)

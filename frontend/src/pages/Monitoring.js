@@ -4,15 +4,11 @@ import { useDispatch } from 'react-redux';
 import { addCameraRecord } from '../actions/action';
 
 const Monitoring = () => {
-
-    const [message, setMessage] = useState("");
-    const [file, setFile] = useState(null);
     const [client, setClient] = useState(null);
-    const [localStream, setLocalStream] = useState(new MediaStream());
+    const [picInterval, setPicInterval] = useState(null);
     const dispatch = useDispatch();
     const videoRef = useRef(null);
     const photoRef = useRef(null);
-    const stripRef = useRef(null);
 
     const constraints = {
         'video': true
@@ -37,44 +33,28 @@ const Monitoring = () => {
                 console.log(data2);
             }
         }
+
+        handleOpenVideo();
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        let message = e.target.message.value;
-        console.log(client);
-        client.send(JSON.stringify({
-            'message': message
-        }))
-        e.target.message.value = '';
-    }
 
-    const handleFileChange = (e) => {
-        setMessage(e.target.files[0].name);
-        setFile(e.target.files[0]);
-    }
-
-    const handleSendImage = (e) => {
-        e.preventDefault();
-        console.log(client);
-        if (file) {
-            client.send(file);
-        }
-    }
 
     const handleOpenVideo = () => {
-        let localVideo = document.querySelector('#local-video');
         console.log("Starting video");
         let userMedia = navigator.mediaDevices.getUserMedia(constraints)
-            .then(stream => {
-                let video = videoRef.current;
-                video.srcObject = stream;
-                video.play()
+            .then(async (stream) => {
+                let video = await videoRef.current;
+                video.srcObject = await stream;
+                await video.play();
+                let newInterval = setInterval(() => {
+                    document.getElementById("take-pic").click();
+                }, 1500);
+                setPicInterval(newInterval);
             })
             .catch(error => console.log(error))
     }
 
-    const handleStopVideo = (e) => {
+    const handleDisconnect = (e) => {
         let video = videoRef.current;
         const stream = video.srcObject;
         const tracks = stream.getTracks();
@@ -85,39 +65,15 @@ const Monitoring = () => {
         }
 
         video.srcObject = null;
+        clearInterval(picInterval);
+        // client.onclose = () => {
+        //     console.log("disconnected!");
+        // }
+        client.close()
     }
 
-    const paintToCanvas = () => {
-        let video = videoRef.current;
-        let photo = photoRef.current;
-        let ctx = photo.getContext("2d");
-
-        const width = 320;
-        const height = 240;
-        photo.width = width;
-        photo.height = height;
-
-        return setInterval(() => {
-            ctx.drawImage(video, 0, 0, width, height);
-        }, 200);
-    };
-
-    const takePhoto = () => {
-        let photo = photoRef.current;
-        let strip = stripRef.current;
-
-        const data = photo.toDataURL("image/jpeg");
-
-        const link = document.createElement("a");
-        link.href = data;
-        link.setAttribute("download", "myWebcam");
-        link.innerHTML = `<img src='${data}' alt='thumbnail'/>`;
-        strip.insertBefore(link, strip.firstChild);
-    };
-
-
     const takePicture = () => {
-        let width = 500
+        let width = 400
         let height = width/(16/9)
         let photo = photoRef.current;
         let video = videoRef.current;
@@ -129,7 +85,6 @@ const Monitoring = () => {
         ctx.drawImage(video, 0, 0, width, height);
 
         const data = JSON.stringify(photo.toDataURL("image/jpeg")).split(',')[1];
-        // const newData = data.substr
         client.send(data);
     }
 
@@ -139,9 +94,8 @@ const Monitoring = () => {
             <div>
                 <div>
                     <button onClick={handleConnect}>Connect</button>
-                    <button onClick={handleOpenVideo}>Open video</button>
-                    <button onClick={handleStopVideo}>Stop Video</button>
-                    <button onClick={takePicture}>Take a photo</button>
+                    <button id="take-pic" onClick={takePicture}>Take pic</button>
+                    <button onClick={handleDisconnect}>Disconnect</button>
                 </div>
                 <div style={{display:"flex", width:"100%"}}>
                     <div style={{width:"30%"}}><video ref={videoRef} /></div>

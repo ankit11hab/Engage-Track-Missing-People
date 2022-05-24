@@ -43,25 +43,9 @@ const options = {
     maintainAspectRatio: false
 };
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+const labels = ['18th', '19th', '20th', '21st', '22nd', '23rd', 'Today'];
 
-const data = {
-    labels,
-    datasets: [
-        {
-            label: 'Dataset 1',
-            data: [1, 5, 3, 6, 4],
-            borderColor: 'rgb(255, 99, 132)',
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-        },
-        {
-            label: 'Dataset 2',
-            data: [2, 3, 1, 5, 4],
-            borderColor: 'rgb(53, 162, 235)',
-            backgroundColor: 'rgba(53, 162, 235, 0.5)',
-        },
-    ],
-};
+
 
 
 const Statistics = () => {
@@ -79,6 +63,30 @@ const Statistics = () => {
     useEffect(async () => {
         await getAllStats();
     }, [])
+
+    const data = {
+        labels,
+        datasets: [
+            {
+                label: 'Dataset 1',
+                data: stats.enlisted_daywise,
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            },
+            {
+                label: 'Dataset 2',
+                data: stats.tracked_daywise,
+                borderColor: 'rgb(53, 162, 235)',
+                backgroundColor: 'rgba(53, 162, 235, 0.5)',
+            },
+            {
+                label: 'Dataset 3',
+                data: stats.found_daywise,
+                borderColor: 'green',
+                backgroundColor: 'rgba(53, 162, 235, 0.5)',
+            },
+        ],
+    };
 
     return (
         <div>
@@ -98,10 +106,10 @@ const Statistics = () => {
                                         </div>
                                         <div style={{ display: "flex", flexDirection: "column", marginLeft: "15px" }}>
                                             <div style={{ fontSize: "12px", fontWeight: "500", color: "grey" }}>
-                                                Persons Missing
+                                                Persons Enlisted
                                             </div>
                                             <div style={{ fontSize: "20px", fontWeight: "500" }}>
-                                                {stats.missing} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.missing_today}↑</span>
+                                                {stats.enlisted} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.enlisted_daywise[0]}↑</span>
                                             </div>
                                         </div>
                                     </div>
@@ -122,7 +130,7 @@ const Statistics = () => {
                                                 Persons Tracked
                                             </div>
                                             <div style={{ fontSize: "20px", fontWeight: "500" }}>
-                                                {stats.tracked} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.tracked_today}↑</span>
+                                                {stats.tracked} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.tracked_daywise[0]}↑</span>
                                             </div>
                                         </div>
                                     </div>
@@ -142,7 +150,7 @@ const Statistics = () => {
                                                 Persons Found
                                             </div>
                                             <div style={{ fontSize: "20px", fontWeight: "500" }}>
-                                                {stats.found} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.found_today}↑</span>
+                                                {stats.found} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.found_daywise[0]}↑</span>
                                             </div>
                                         </div>
                                     </div>

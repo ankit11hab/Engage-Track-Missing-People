@@ -5,6 +5,7 @@ from django.contrib.auth  import get_user_model
 import datetime
 
 from authentication.models import CustomUser
+from camera.models import CapturedImages
 
 User = get_user_model()
 
@@ -28,8 +29,8 @@ class MissingPerson(models.Model):
     details = models.TextField(max_length=1000, default="")
     applicant_email = models.EmailField(max_length=60,default="")
     time_of_addition = models.DateTimeField(default=datetime.datetime.now())
-    time_of_first_tracking = models.DateTimeField(default=None, null=True)
-    time_of_found = models.DateTimeField(default=None, null=True)
+    time_of_first_tracking = models.DateTimeField(default=None, null=True, blank=True)
+    time_of_found = models.DateTimeField(default=None, null=True, blank=True)
 
 
     def __str__(self):
@@ -40,6 +41,7 @@ class TrackHistory(models.Model):
     missing_person = models.ForeignKey(MissingPerson, on_delete=models.CASCADE, null=True)
     time_of_tracking = models.DateTimeField(default=datetime.datetime.now())
     location = models.CharField(max_length=300,default="")
+    captured_image = models.OneToOneField(CapturedImages, on_delete=models.SET, null=True, blank=True)
 
     def __str__(self):
         return f"{self.missing_person.name} | {self.time_of_tracking}"
