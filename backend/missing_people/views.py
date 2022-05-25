@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import uuid
 from .models import MissingPerson, TrackHistory
-from camera.models import CameraRecord, CapturedImages
+from camera.models import CameraRecord
 from authentication.models import CustomUser
 from django.conf import settings
 import datetime
@@ -105,7 +105,7 @@ def getAllTracked(request):
     missing_person = MissingPerson.objects.all()
     data = []
     for person in missing_person:
-        if missing_person.isTracked:
+        if person.isTracked:
             missing_person_details = {
                 "person_uuid": person.person_uuid,
                 "applicant_police_station": person.applicant_police_station.police_station_uid,
@@ -122,7 +122,7 @@ def getAllFound(request):
     missing_person = MissingPerson.objects.all()
     data = []
     for person in missing_person:
-        if missing_person.isFound:
+        if person.isFound:
             missing_person_details = {
                 "person_uuid": person.person_uuid,
                 "applicant_police_station": person.applicant_police_station.police_station_uid,
@@ -143,10 +143,17 @@ def getPerson(request):
     print(location)
     track_history = []
     for item in location:
-        detail = {
-            "time": item.time_of_tracking,
-            "location": item.location
-        }
+        if item.image.name:
+            detail = {
+                "time": item.time_of_tracking,
+                "location": item.location,
+                "image": settings.SERVER_URL+'media/'+item.image.name
+            }
+        else:
+            detail = {
+                "time": item.time_of_tracking,
+                "location": item.location
+            }
         track_history.append(detail)
     missing_person_details = {
         "person_uuid": missing_person.person_uuid,
@@ -172,10 +179,10 @@ def getPerson(request):
 @api_view(['GET'])
 def getStatistics(request):
     missing_person = MissingPerson.objects.all()
+    track_history = TrackHistory.objects.exclude(image__exact='').count()
     police_stations = CustomUser.objects.all()
     ps_count = police_stations.count()
     camera_records = CameraRecord.objects.all().count()
-    captured_images = CapturedImages.objects.all().count()
     max_ps_missing = 0
     ps_missing = ""
     for station in police_stations:
@@ -226,8 +233,8 @@ def getStatistics(request):
         "tracked_daywise": number_of_persons_tracked_daywise,
         "found_daywise": number_of_persons_found_daywise,
         "police_station_count": ps_count,
+        "image_count": track_history,
         "camera_count": camera_records,
-        "image_count": captured_images,
         "most_active_ps": ps_missing,
         "enlisted_most_active_ps": max_ps_missing
 

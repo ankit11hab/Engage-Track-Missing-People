@@ -8,6 +8,7 @@ import Select from 'react-select';
 import { useNavigate } from "react-router-dom";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import LockResetIcon from '@mui/icons-material/LockReset';
+import LinearProgress from '@mui/material/LinearProgress';
 
 const style = {
   position: 'absolute',
@@ -86,38 +87,72 @@ const Header = () => {
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [currentPassword, setCurrentPassword] = useState(false);
   const [newPassword, setNewPassword] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [showLinearProgress, setShowLinearProgress] = useState(false);
   const [confirmNewPassword, setConfirmNewPassword] = useState(false);
   const handleloginModalOpen = () => setLoginModalOpen(true);
-  const handleloginModalClose = () => setLoginModalOpen(false);
+  const handleloginModalClose = () => {
+    setShowError(false);
+    setLoginModalOpen(false);
+  }
   const handleAccountSettingsOpen = () => setAccountSettingsOpen(true);
   const handleAccountSettingsClose = () => setAccountSettingsOpen(false);
   const handleChangePasswordOpen = () => {
     setAccountSettingsOpen(false);
     setChangePasswordOpen(true);
   }
-  const handleChangePasswordClose = () => setChangePasswordOpen(false);
+  const handleChangePasswordClose = () => {
+    setShowError(false);
+    setChangePasswordOpen(false);
+  }
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isAuthenticated = useSelector(state => state.isAuthenticated)
   const psd = useSelector(state => state.police_station_details)
 
   const handleLogin = async () => {
+    setShowError(false);
+    setShowLinearProgress(true);
     const data = await dispatch(loginUser(psUid, password));
-    const data2 = await dispatch(getPoliceStationDetails(data.data.access));
-    console.log(data);
-    if (data.status === 200)
+    if (data.status === 200) {
       handleloginModalClose();
+      const data2 = await dispatch(getPoliceStationDetails(data.data.access));
+      setShowError(false);
+    }
+    else {
+      setShowError(true);
+    }
+    setShowLinearProgress(false);
+
   }
 
-  const handleChangePassword = async () => {
+  const changePasswordFunc = async (currentPassword, newPassword) => {
     const details = {
       current_password: currentPassword,
       new_password: newPassword,
     }
     const data = await dispatch(changePassword(details, JSON.parse(localStorage.getItem('authTokens')).access));
     console.log(data);
-    if (data.status === 200)
+    if (data.status === 200) {
+      setShowLinearProgress(false);
+      setShowError(false);
       handleChangePasswordClose();
+    }
+    else {
+      setShowLinearProgress(false);
+      setShowError(true);
+    }
+  }
+
+  const handleChangePassword = async () => {
+    setShowError(false);
+    setShowLinearProgress(true);
+    if(newPassword===confirmNewPassword)
+      changePasswordFunc(currentPassword, newPassword);
+    else {
+      setShowLinearProgress(false);
+      setShowError(true);
+    }
   }
 
   const handleLogout = async () => {
@@ -183,12 +218,25 @@ const Header = () => {
             <div style={{ fontWeight: "500", fontSize: "14px", marginTop: "14px", color: "rgb(70,70,70)" }}>
               Password:
             </div>
+
             <div>
               <input onChange={(e) => setPassword(e.target.value)} type="password" style={{ width: "96%", margin: "8px 0 5px 0.2px", height: "30px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none" }} />
             </div>
-            <button onClick={handleLogin} className='sign-in-btn'>
-              Sign in
-            </button>
+            {showError ? <div style={{ fontSize: "12px", color: "red", opacity: "0.85" }}>
+              * Police Station UID or Password is incorrect
+            </div>
+              :
+              <div style={{ marginTop: "12px" }}></div>}
+
+            {
+              showLinearProgress ?
+                <LinearProgress style={{ marginTop: "25px" }} />
+                :
+                <button onClick={handleLogin} className='sign-in-btn'>
+                  Sign in
+                </button>
+            }
+
           </form>
         </Box>
       </Modal>
@@ -227,30 +275,39 @@ const Header = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={{...style2, width:"340px", height:"270px"}}>
+        <Box sx={{ ...style2, width: "340px", height: "270px" }}>
           <div>
-            <div style={{ display: "flex", width: "100%", fontSize:"14px" }}>
+            <div style={{ display: "flex", width: "100%", fontSize: "14px" }}>
               <div style={{ width: "100%" }}>
                 <div>Current password</div>
-                <div><input onChange={(e)=>setCurrentPassword(e.target.value)} type="password" style={{ width: "96%", margin: "8px 0 5px 0.2px", height: "30px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none" }} /></div>
+                <div><input onChange={(e) => setCurrentPassword(e.target.value)} type="password" style={{ width: "96%", margin: "8px 0 5px 0.2px", height: "30px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none" }} /></div>
               </div>
             </div>
-            <div style={{ display: "password", width: "100%", fontSize:"14px", marginTop:"8px" }}>
+            <div style={{ display: "password", width: "100%", fontSize: "14px", marginTop: "8px" }}>
               <div style={{ width: "100%" }}>
                 <div>New password</div>
-                <div><input onChange={(e)=>setNewPassword(e.target.value)} type="password" style={{ width: "96%", margin: "8px 0 5px 0.2px", height: "30px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none" }} /></div>
+                <div><input onChange={(e) => setNewPassword(e.target.value)} type="password" style={{ width: "96%", margin: "8px 0 5px 0.2px", height: "30px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none" }} /></div>
               </div>
             </div>
-            <div style={{ display: "password", width: "100%", fontSize:"14px", marginTop:"8px" }}>
+            <div style={{ display: "password", width: "100%", fontSize: "14px", marginTop: "8px" }}>
               <div style={{ width: "100%" }}>
                 <div>Confirm new password</div>
-                <div><input onChange={(e)=>setConfirmNewPassword(e.target.value)} type="password" style={{ width: "96%", margin: "8px 0 5px 0.2px", height: "30px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none" }} /></div>
+                <div><input onChange={(e) => setConfirmNewPassword(e.target.value)} type="password" style={{ width: "96%", margin: "8px 0 5px 0.2px", height: "30px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none" }} /></div>
               </div>
             </div>
-            
-            <button onClick={handleChangePassword} className='sign-in-btn'>
-              Submit
-            </button>
+            {showError ? <div style={{ fontSize: "12px", color: "red", opacity: "0.85" }}>
+              * Please fill the inputs properly!
+            </div>
+              :
+              <div style={{ marginTop: "12px" }}></div>}
+            {showLinearProgress ?
+              <LinearProgress style={{ marginTop: "25px" }} />
+              :
+              <button onClick={handleChangePassword} className='sign-in-btn'>
+                Submit
+              </button>
+            }
+
           </div>
         </Box>
       </Modal>

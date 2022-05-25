@@ -5,6 +5,7 @@ import { addTrackHistory, deletePerson, editPersonDetails, getPersonDetails } fr
 import Box from '@mui/material/Box';
 import Modal from 'react-modal';
 import Button from '@mui/material/Button';
+import PhotoIcon from '@mui/icons-material/Photo';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
@@ -122,6 +123,7 @@ const PersonDetails = () => {
     const [isFound, setIsFound] = useState("-1");
     const [timeOfTracking, setTimeOfTracking] = useState("");
     const [location, setLocation] = useState("");
+    const [showError, setShowError] = useState(false);
     const param = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -162,11 +164,18 @@ const PersonDetails = () => {
         setPerson(data2.data);
         setIsLoading(false);
         handleCloseEditModal();
+
     }
 
     const handleAdd = async () => {
+        setShowError(false);
         setIsLoading(true);
-        const data = await dispatch(addTrackHistory({time_of_tracking:timeOfTracking, location, person_uuid}, JSON.parse(localStorage.getItem("authTokens")).access));
+        if(location==""||timeOfTracking=="") {
+            setIsLoading(false);
+            setShowError(true);
+            return;
+        }
+        const data = await dispatch(addTrackHistory({ time_of_tracking: timeOfTracking, location, person_uuid }, JSON.parse(localStorage.getItem("authTokens")).access));
         const data2 = await dispatch(getPersonDetails(person_uuid));
         setPerson(data2.data);
         setIsLoading(false);
@@ -189,13 +198,17 @@ const PersonDetails = () => {
         document.getElementById("edit-about").innerText = person.details;
     };
     const handleCloseEditModal = () => {
+        setShowError(false);
         setOpenEditModal(false);
     };
     const handleOpenAddModal = async () => {
         await setOpenAddModal(true);
     };
     const handleCloseAddModal = () => {
+        setShowError(false);
         setOpenAddModal(false);
+        setLocation("");
+        setTimeOfTracking("");
     };
     function afterOpenModal() {
         subtitle.style.color = '#f00';
@@ -278,8 +291,8 @@ const PersonDetails = () => {
                                     <input defaultChecked={person.isFound} onChange={(e) => setIsFound(e.target.checked)} type="checkbox" style={{ margin: "0 8px 0 0", transform: "translate(0,1px)" }} /> The person has been found
                                 </div>
                                 <div style={{ display: "flex", marginTop: "14px" }}>
-                                    {isLoading ? <div><CircularProgress /></div> : null}
-                                    <div style={{ marginLeft: "auto" }}><button onClick={handleCloseEditModal} style={{ border: "none", padding: "6px 12px 6px 12px", borderRadius: "4px" }}>Cancel</button></div>
+                                <div style={{ marginLeft: "auto", transform:"translate(0,5px)" }}>{isLoading ? <CircularProgress size="20px" style={{color:"#37A794", marginRight:"15px"}} />: null}</div> 
+                                    <div><button onClick={handleCloseEditModal} style={{ border: "none", padding: "6px 12px 6px 12px", borderRadius: "4px" }}>Cancel</button></div>
                                     <div><button onClick={handleSave} style={{ border: "none", padding: "6px 12px 6px 12px", borderRadius: "4px", background: "#37A794", color: "white", marginLeft: "8px" }}>Save</button></div>
                                 </div>
                             </div>
@@ -375,10 +388,11 @@ const PersonDetails = () => {
                                     <input onChange={(e) => handleDateTimeChange(e.target.value, "location")} type="text" style={{ width: "100%", height: "33px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none", marginTop: "5px" }} />
                                 </div>
                             </div>
-                            
+
                             <div style={{ display: "flex", marginTop: "14px" }}>
-                                {isLoading ? <div style={{ marginLeft: "auto" }}><CircularProgress /></div> : null}
-                                <div style={{ marginLeft: "auto" }}><button onClick={handleCloseAddModal} style={{ border: "none", padding: "6px 12px 6px 12px", borderRadius: "4px" }}>Cancel</button></div>
+                                {showError?<div style={{fontSize:"12px", color:"red", opacity:"0.85", marginLeft:"93px"}}>* Please fill all the fields properly!</div>:null}
+                            <div style={{ marginLeft: "auto", transform:"translate(0,5px)" }}>{isLoading ? <CircularProgress size="20px" style={{color:"#37A794", marginRight:"15px"}} />: null}</div> 
+                                <div><button onClick={handleCloseAddModal} style={{ border: "none", padding: "6px 12px 6px 12px", borderRadius: "4px" }}>Cancel</button></div>
                                 <div><button onClick={handleAdd} style={{ border: "none", padding: "6px 12px 6px 12px", borderRadius: "4px", background: "#37A794", color: "white", marginLeft: "8px" }}>Add</button></div>
                             </div>
                         </div>
@@ -391,6 +405,7 @@ const PersonDetails = () => {
                                     <div>{index + 1}. </div>
                                     <div style={{ marginLeft: "10px" }}>{item.time.substring(11, 16)}, {moment(item.time.substring(0, 10)).format("Do MMM YYYY")}{" "} :</div>
                                     <div style={{ marginLeft: "10px" }}>{item.location}</div>
+                                    {item.image ? <div style={{ marginLeft: "15px" }}><a style={{ fontSize: "12px", opacity: "0.75" }} href={item.image} target="_blank">View image</a></div> : null}
                                 </div>
                             )
                         }) : null}

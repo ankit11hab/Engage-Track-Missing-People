@@ -2,13 +2,15 @@ import React, { useEffect } from 'react';
 import './MissingPeopleStyles.css';
 import Obama from '../images/obama.jpg';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllAppliedHere, getAllCriminals, getAllNonCriminals, getAllPersons } from '../actions/action';
+import { getAllAppliedHere, getAllCriminals, getAllFound, getAllNonCriminals, getAllPersons, getAllTracked } from '../actions/action';
 import { Link } from 'react-router-dom';
 import Select from 'react-select';
 
 
 const options = [
   { value: 'A', label: 'All', type: 'all' },
+  { value: 'T', label: 'All tracked', type: 'all' },
+  { value: 'F', label: 'All found', type: 'all' },
   { value: 'C', label: 'Criminals', type: 'all' },
   { value: 'N', label: 'Non-criminals', type: 'all' },
   { value: 'P', label: 'Applied from this police station', type: 'logged' },
@@ -16,6 +18,8 @@ const options = [
 
 const options2 = [
   { value: 'A', label: 'All', type: 'all' },
+  { value: 'T', label: 'All tracked', type: 'all' },
+  { value: 'F', label: 'All found', type: 'all' },
   { value: 'C', label: 'Criminals', type: 'all' },
   { value: 'N', label: 'Non-criminals', type: 'all' }
 ]
@@ -64,6 +68,14 @@ const MissingPeople = () => {
     const data = await dispatch(getAllCriminals());
   }
 
+  const getAllTrackedPersons = async (start, end) => {
+    const data = await dispatch(getAllTracked());
+  }
+
+  const getAllFoundPersons = async (start, end) => {
+    const data = await dispatch(getAllFound());
+  }
+
   const getAllNonCriminalPersons = async (start, end) => {
     const data = await dispatch(getAllNonCriminals());
   }
@@ -73,8 +85,13 @@ const MissingPeople = () => {
   }
 
   const handleChange = (val) => {
+    console.log(val.value)
     if(val.value==='A') 
       getAllMissingPersons();
+    if(val.value==='T') 
+      getAllTrackedPersons();
+    if(val.value==='F') 
+      getAllFoundPersons();
     if(val.value==='C') 
       getAllCriminalPersons();
     if(val.value==='N') 

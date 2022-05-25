@@ -93,9 +93,9 @@ const Monitoring = () => {
         <div>
             <div>
                 <div>
-                    <button onClick={handleConnect}>Connect</button>
-                    <button id="take-pic" onClick={takePicture}>Take pic</button>
-                    <button onClick={handleDisconnect}>Disconnect</button>
+                    <button style={{marginLeft: "20px",border: "1px solid rgb(192,192,192)", borderRadius: "5px", padding: "6px 12px 6px 12px", cursor: "pointer", background:"white" }} onClick={handleConnect}>Connect with camera</button>
+                    <button id="take-pic" style={{display:"none"}} onClick={takePicture}>Take pic</button>
+                    <button style={{marginLeft: "20px",border: "1px solid rgb(192,192,192)", borderRadius: "5px", padding: "6px 12px 6px 12px", cursor: "pointer", background:"white" }} onClick={handleDisconnect}>Disconnect</button>
                 </div>
                 <div style={{display:"flex", width:"100%"}}>
                     <div style={{width:"30%"}}><video ref={videoRef} /></div>

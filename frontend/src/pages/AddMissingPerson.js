@@ -5,6 +5,7 @@ import Select from 'react-select';
 import { useDispatch } from 'react-redux';
 import { addMissingPerson } from '../actions/action';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import TextField from '@mui/material/TextField';
 import { useNavigate } from "react-router-dom";
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -99,12 +100,18 @@ const AddMissingPerson = () => {
             newArr[index].location = val;
 
         setTrackHistory(newArr);
-        console.log(newArr);
     }
 
     const addNewLocation = () => {
         let newArr = JSON.parse(JSON.stringify(trackHistory));
         newArr.push({ datetime: "", location: "" });
+        setTrackHistory(newArr);
+    }
+
+    const handleRemoveTrack = async (index) => {
+        console.log(index, trackHistory);
+        let newArr = JSON.parse(JSON.stringify(trackHistory));
+        newArr.splice(index,1);
         setTrackHistory(newArr);
     }
 
@@ -225,12 +232,16 @@ const AddMissingPerson = () => {
                                         InputLabelProps={{
                                             shrink: true,
                                         }}
+                                        value={history.time_of_tracking}
                                         onChange={(e) => handleDateTimeChange(index, e.target.value, "datetime")}
                                     />
                                 </div>
                                 <div>
                                     Location
-                                    <input onChange={(e) => handleDateTimeChange(index, e.target.value, "location")} type="text" style={{ width: "100%", height: "33px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none", marginTop: "5px" }} />
+                                    <input value={history.location} onChange={(e) => handleDateTimeChange(index, e.target.value, "location")} type="text" style={{ width: "100%", height: "33px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none", marginTop: "5px" }} />
+                                </div>
+                                <div style={{margin:"30px 0 0 30px"}}>
+                                    <button onClick={()=>handleRemoveTrack(index)} style={{backgroundColor:"rgb(250,250,250)", border:"1px solid rgb(230,230,230)", borderRadius:"5px", padding:"3px 3px 3px 3px", cursor:"pointer"}}><DeleteOutlinedIcon style={{fontSize:"20px", color:"rgb(50,50,50)"}} /></button>
                                 </div>
                             </div>
                         )

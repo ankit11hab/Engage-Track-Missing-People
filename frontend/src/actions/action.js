@@ -87,6 +87,7 @@ export const changePassword = (details, access_token) => async (dispatch) => {
     }
     catch (err) {
         console.log("Error:", err);
+        return {status:false};
     }
 
     return data;
@@ -150,7 +151,7 @@ export const editPoliceStationDetails = (access_token, details) => async (dispat
 
 export const addMissingPerson = (detail, access_token) => async (dispatch) => {
     try {
-        console.log("here")
+        console.log(detail)
         const config_header = {
             headers: {
                 Authorization: `Bearer ${access_token}`,
@@ -314,6 +315,52 @@ export const getAllAppliedHere = (access_token) => async (dispatch) => {
         const data = await axios.get(
             `${config().url}/missing/get/all-applied-from-here`,
             config_header
+        )
+        console.log("ok")
+        dispatch({
+            type: 'GET_PERSONS',
+            allPersons: data.data
+        });
+
+        console.log(data);
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+export const getAllTracked = (access_token) => async (dispatch) => {
+    let data;
+    try {
+
+        const data = await axios.get(
+            `${config().url}/missing/get/all-tracked`
+        )
+        console.log("ok")
+        dispatch({
+            type: 'GET_PERSONS',
+            allPersons: data.data
+        });
+
+        console.log(data);
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+export const getAllFound = (access_token) => async (dispatch) => {
+    let data;
+    try {
+
+        const data = await axios.get(
+            `${config().url}/missing/get/all-found`
         )
         console.log("ok")
         dispatch({

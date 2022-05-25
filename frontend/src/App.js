@@ -6,7 +6,6 @@ import Navbar from "./components/Navbar";
 import AddMissingPerson from "./pages/AddMissingPerson";
 import Dashboard from "./pages/Dashboard";
 import MissingPeople from "./pages/MissingPeople";
-import Login from "./pages/user/Login";
 import PrivateRoute from "./utils/PrivateRoute";
 import { useDispatch, useSelector } from 'react-redux';
 import { getPoliceStationDetails } from "./actions/action";
@@ -50,7 +49,6 @@ function App() {
 								</Route>
 								<Route path="/missing-people" element={<MissingPeople />} />
 								<Route path="/missing-people/:person_uuid" element={<PersonDetails />} />
-								<Route path="/login" element={<Login />} />
 							</Routes>
 						</div>
 					</div>

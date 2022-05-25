@@ -4,7 +4,7 @@ import json
 import io
 import cv2
 import numpy as np
-from .models import CameraRecord, CapturedImages
+from .models import CameraRecord
 from missing_people.models import MissingPerson, TrackHistory
 import base64
 from asgiref.sync import sync_to_async
@@ -91,6 +91,7 @@ class CameraConsumer(AsyncWebsocketConsumer):
                 last_track = await sync_to_async(track_history.order_by("-time_of_tracking").first)()
                 time_then = last_track.time_of_tracking
                 time_diff = await sync_to_async((time_now_aware - time_then).total_seconds)()/60
+                print("Time", time_diff)
                 if time_diff>5:
                     camera = await sync_to_async(CameraRecord.objects.get)(channel_name=self.channel_name)
                     location = str(camera.location)
@@ -102,11 +103,7 @@ class CameraConsumer(AsyncWebsocketConsumer):
                     im_b64 = base64.b64encode(im_bytes)
                     final_img = await sync_to_async(ContentFile)(base64.b64decode(im_b64), name=f'{str(uuid.uuid4())}.jpg')
                     await sync_to_async(print)(final_img)
-
-                    await sync_to_async(CapturedImages(location=location, image=final_img).save)()
-                    # captured_image = CapturedImages(location=location, image=original_image)
-                    # await sync_to_async(captured_image.save)()
-                    # await sync_to_async(TrackHistory(missing_person=missingPerson, location=location, captured_image=captured_image).save)()
+                    await sync_to_async(TrackHistory(missing_person=missingPerson, location=location, image=final_img).save)()
 
 
     async def disconnect(self, close_code):
