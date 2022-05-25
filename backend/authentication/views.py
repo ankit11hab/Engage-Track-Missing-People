@@ -4,6 +4,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.hashers import check_password
 
 
 class RegisterView(GenericAPIView):
@@ -41,3 +42,15 @@ def editPoliceStationDetails(request):
         user.email = data["email"]
     user.save()
     return Response("Police station details changed", status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def changePassword(request):
+    user = request.user
+    data = request.data
+    if user.check_password(data['current_password']):
+        user.set_password(data['new_password'])
+        user.save()
+        return Response("Password has been updated", status=status.HTTP_200_OK)
+    return Response("Enter correct credentials", status=status.HTTP_406_NOT_ACCEPTABLE)

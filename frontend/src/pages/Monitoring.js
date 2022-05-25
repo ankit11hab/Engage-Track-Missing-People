@@ -99,7 +99,7 @@ const Monitoring = () => {
                 </div>
                 <div style={{display:"flex", width:"100%"}}>
                     <div style={{width:"30%"}}><video ref={videoRef} /></div>
-                    <div style={{width:"50%"}}><canvas ref={photoRef}></canvas></div>
+                    <div style={{width:"50%", display:"none"}}><canvas ref={photoRef}></canvas></div>
                 </div>
                 
             </div>

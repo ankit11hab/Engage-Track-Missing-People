@@ -69,6 +69,30 @@ setInterval(() => {
 }, 240000);
 
 
+export const changePassword = (details, access_token) => async (dispatch) => {
+    let data;
+    try {
+        const config_header = {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        };
+
+        const data = await axios.post(
+            `${config().url}/auth/change-password/`,
+            details,
+            config_header
+        )
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+
 export const getPoliceStationDetails = (access_token) => async (dispatch) => {
     let data;
     try {

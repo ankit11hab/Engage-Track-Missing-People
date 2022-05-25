@@ -1,6 +1,7 @@
 import datetime
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+import io
 import cv2
 import numpy as np
 from .models import CameraRecord, CapturedImages
@@ -9,6 +10,27 @@ import base64
 from asgiref.sync import sync_to_async
 from missing_people.views import get_face_names_and_encodings
 from PIL import Image
+import uuid
+from django.core.files.base import ContentFile
+
+
+# @sync_to_async
+# def save_image(channel_name, person_uuid):
+#     print("Here")
+#     time_now = datetime.datetime.now()
+#     time_now_aware = time_now.astimezone()
+#     missingPersonArr = MissingPerson.objects.filter(person_uuid=person_uuid)
+#     missingPerson = missingPersonArr.first()
+#     track_history = TrackHistory.objects.filter(missing_person=missingPerson)
+    
+#     last_track = track_history.order_by("-time_of_tracking").first()
+#     time_then = last_track.time_of_tracking
+#     time_diff = (time_now_aware - time_then).total_seconds()/60
+#     if time_diff>5:
+#         camera = CameraRecord.objects.get(channel_name=channel_name)
+#         location = str(camera.location)
+#         ps = camera.police_station
+#         print(ps)
 
 
 class CameraConsumer(AsyncWebsocketConsumer):
@@ -28,10 +50,6 @@ class CameraConsumer(AsyncWebsocketConsumer):
 
 
     async def receive(self, text_data):
-        print("Coming")
-        # missingPersonArr = await sync_to_async(MissingPerson.objects.filter)(person_uuid="ae407bf5-5609-42ea-a162-833983bdda52")
-        # missingPerson = await sync_to_async(missingPersonArr.first)()
-        # print(missingPerson.name)
         known_face_names, known_face_encodings, known_face_uuids, face_recognition = get_face_names_and_encodings()
         image = text_data  
         decoded_data = base64.b64decode(image)
@@ -63,6 +81,7 @@ class CameraConsumer(AsyncWebsocketConsumer):
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(original_image,name_of_person,(left_pos,bottom_pos), font, 0.5, (0,0,255),1)
             if flag==1:
+                # save_image(self.channel_name, person_uuid)
                 time_now = await sync_to_async(datetime.datetime.now)()
                 time_now_aware = await sync_to_async(time_now.astimezone)()
                 missingPersonArr = await sync_to_async(MissingPerson.objects.filter)(person_uuid=person_uuid)
@@ -74,17 +93,19 @@ class CameraConsumer(AsyncWebsocketConsumer):
                 time_diff = await sync_to_async((time_now_aware - time_then).total_seconds)()/60
                 if time_diff>5:
                     camera = await sync_to_async(CameraRecord.objects.get)(channel_name=self.channel_name)
-                    # captured_image = CapturedImages(camera=camera, image=original_image)
+                    location = str(camera.location)
+                    await sync_to_async(print)(location)
+                    # await sync_to_async(print)(location)
+
+                    _, im_arr = cv2.imencode('.jpg', original_image)  # im_arr: image in Numpy one-dim array format.
+                    im_bytes = im_arr.tobytes()
+                    im_b64 = base64.b64encode(im_bytes)
+                    final_img = await sync_to_async(ContentFile)(base64.b64decode(im_b64), name=f'{str(uuid.uuid4())}.jpg')
+                    await sync_to_async(print)(final_img)
+
+                    await sync_to_async(CapturedImages(location=location, image=final_img).save)()
+                    # captured_image = CapturedImages(location=location, image=original_image)
                     # await sync_to_async(captured_image.save)()
-
-                    # im_pil = Image.fromarray(original_image)
-                    # buffer = io.BytesIO()
-                    # im_pil.save(buffer, format='jpeg')
-                    # img_jpg = buffer.getvalue()
-
-                    await sync_to_async(CapturedImages(camera=camera, image=original_image).save)()
-                    # location = camera.location
-                    await sync_to_async(print)(camera.location)
                     # await sync_to_async(TrackHistory(missing_person=missingPerson, location=location, captured_image=captured_image).save)()
 
 

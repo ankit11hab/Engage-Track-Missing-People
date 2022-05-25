@@ -99,6 +99,41 @@ def getAllAppliedFromHere(request):
     
     return Response(data, status=status.HTTP_200_OK)
 
+
+@api_view(['GET'])
+def getAllTracked(request):
+    missing_person = MissingPerson.objects.all()
+    data = []
+    for person in missing_person:
+        if missing_person.isTracked:
+            missing_person_details = {
+                "person_uuid": person.person_uuid,
+                "applicant_police_station": person.applicant_police_station.police_station_uid,
+                "name": person.name,
+                "details": person.details,
+                "image": settings.SERVER_URL+'media/'+person.image.name
+            }
+            data.append(missing_person_details)
+    
+    return Response(data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def getAllFound(request):
+    missing_person = MissingPerson.objects.all()
+    data = []
+    for person in missing_person:
+        if missing_person.isFound:
+            missing_person_details = {
+                "person_uuid": person.person_uuid,
+                "applicant_police_station": person.applicant_police_station.police_station_uid,
+                "name": person.name,
+                "details": person.details,
+                "image": settings.SERVER_URL+'media/'+person.image.name
+            }
+            data.append(missing_person_details)
+    
+    return Response(data, status=status.HTTP_200_OK)
+
 @api_view(['POST'])
 def getPerson(request):
     data = request.data

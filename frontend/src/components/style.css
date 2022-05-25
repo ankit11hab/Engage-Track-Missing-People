@@ -87,3 +87,13 @@
     -ms-transition: background-color 200ms linear;
     transition: background-color 200ms linear;
 }
+
+.account-btn {
+    background:rgb(239, 239, 239); 
+    padding:10px 14px 6px 14px;
+    border-radius:5px;
+    cursor:pointer;
+    border: none;
+    outline: none;
+    width:100%;
+}

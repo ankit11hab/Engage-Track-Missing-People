@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react';
 import ShareLocationOutlinedIcon from '@mui/icons-material/ShareLocationOutlined';
 import PersonSearchOutlinedIcon from '@mui/icons-material/PersonSearchOutlined';
 import HowToRegOutlinedIcon from '@mui/icons-material/HowToRegOutlined';
+import LocalPoliceOutlinedIcon from '@mui/icons-material/LocalPoliceOutlined';
+import VideoCameraFrontOutlinedIcon from '@mui/icons-material/VideoCameraFrontOutlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { useDispatch } from 'react-redux';
 import { getStats } from '../actions/action';
+import { Link } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { Line } from 'react-chartjs-2';
 import {
@@ -113,9 +117,9 @@ const Statistics = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div style={{ marginTop: "20px", fontSize: "13px", color: "#3f7bea", fontWeight: "500" }}>
+                                    <div style={{ marginTop: "20px"}}><Link to='/missing-people' style={{ fontSize: "13px", color: "#3f7bea", fontWeight: "500", textDecoration:"none" }}>
                                         View all
-                                    </div>
+                                    </Link></div>
                                 </div>
                             </div>
 
@@ -134,9 +138,9 @@ const Statistics = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div style={{ marginTop: "20px", fontSize: "13px", color: "#3f7bea", fontWeight: "500" }}>
+                                    <div style={{ marginTop: "20px"}}><Link to='/missing-people' style={{ fontSize: "13px", color: "#3f7bea", fontWeight: "500", textDecoration:"none" }}>
                                         View all
-                                    </div>
+                                    </Link></div>
                                 </div>
                             </div>
                             <div className='stat-card'>
@@ -154,9 +158,9 @@ const Statistics = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div style={{ marginTop: "20px", fontSize: "13px", color: "#3f7bea", fontWeight: "500" }}>
+                                    <div style={{ marginTop: "20px"}}><Link to='/missing-people' style={{ fontSize: "13px", color: "#3f7bea", fontWeight: "500", textDecoration:"none" }}>
                                         View all
-                                    </div>
+                                    </Link></div>
                                 </div>
                             </div>
                         </div>
@@ -170,7 +174,83 @@ const Statistics = () => {
                                     KJnl
                                 </div>
                             </div>
-                            <div className='graph-card' style={{ width: "32%", display:"flex", flexDirection:"column", alignItems:"center" }}>
+                            <div className='graph-card' style={{ width: "32%", display:"flex", flexDirection:"column" }}>
+                                <div style={{ padding:"15px", fontSize:"14px" }}>
+                                    <div className='stat-row'>
+                                        <div style={{transform:"translate(0,2.5px)"}}>
+                                            <LocalPoliceOutlinedIcon style={{fontSize:"18px", color:"red", opacity:"0.55"}} />
+                                        </div>
+                                        <div style={{marginLeft:"8px"}}>
+                                            Police Stations
+                                        </div>
+                                    </div>
+                                    <div className='stat-row' style={{ fontSize:"13px" }}>
+                                        <div style={{marginLeft:"35px", color:"grey"}}>
+                                            No. of police stations:
+                                        </div>
+                                        <div style={{marginLeft:"auto", fontSize:"12px", color:"green"}}>
+                                            {stats.police_station_count}
+                                        </div>
+                                    </div>
+                                    <div className='stat-row' style={{ fontSize:"13px" }}>
+                                        <div style={{marginLeft:"35px", color:"grey"}}>
+                                            Most active police station:
+                                        </div>
+                                        <div style={{marginLeft:"auto", fontSize:"12px", color:"green"}}>
+                                            {stats.most_active_ps}
+                                        </div>
+                                    </div>
+
+                                    <div className='stat-row' style={{marginTop:"20px"}}>
+                                        <div style={{transform:"translate(0,2.5px)"}}>
+                                            <VideoCameraFrontOutlinedIcon style={{fontSize:"18px", color:"blue", opacity:"0.55"}} />
+                                        </div>
+                                        <div style={{marginLeft:"8px"}}>
+                                            Camera Records
+                                        </div>
+                                    </div>
+                                    <div className='stat-row' style={{ fontSize:"13px" }}>
+                                        <div style={{marginLeft:"35px", color:"grey"}}>
+                                            No. of active cameras:
+                                        </div>
+                                        <div style={{marginLeft:"auto", fontSize:"12px", color:"green"}}>
+                                            {stats.camera_count}
+                                        </div>
+                                    </div>
+                                    <div className='stat-row' style={{ fontSize:"13px" }}>
+                                        <div style={{marginLeft:"35px", color:"grey"}}>
+                                            No. of captured images:
+                                        </div>
+                                        <div style={{marginLeft:"auto", fontSize:"12px", color:"green"}}>
+                                            {stats.image_count}
+                                        </div>
+                                    </div>
+
+                                    <div className='stat-row' style={{marginTop:"20px"}}>
+                                        <div style={{transform:"translate(0,2.5px)"}}>
+                                            <SearchOutlinedIcon style={{fontSize:"18px", color:"#FFBF00", opacity:"1"}} />
+                                        </div>
+                                        <div style={{marginLeft:"8px"}}>
+                                            Missing People
+                                        </div>
+                                    </div>
+                                    <div className='stat-row' style={{ fontSize:"13px" }}>
+                                        <div style={{marginLeft:"35px", color:"grey"}}>
+                                            No. of people enlisted:
+                                        </div>
+                                        <div style={{marginLeft:"auto", fontSize:"12px", color:"green"}}>
+                                            {stats.enlisted}
+                                        </div>
+                                    </div>
+                                    <div className='stat-row' style={{ fontSize:"13px" }}>
+                                        <div style={{marginLeft:"35px", color:"grey"}}>
+                                            No. of people missing:
+                                        </div>
+                                        <div style={{marginLeft:"auto", fontSize:"12px", color:"green"}}>
+                                            {stats.missing}
+                                        </div>
+                                    </div>
+                                </div>
 
                                 
                             </div>

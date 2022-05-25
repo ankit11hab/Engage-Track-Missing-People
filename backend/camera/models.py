@@ -16,13 +16,9 @@ class CameraRecord(models.Model):
 
 
 class CapturedImages(models.Model):
-    camera = models.ForeignKey(CameraRecord, on_delete=models.SET)
     image = models.ImageField(default='default.jpg', upload_to = 'captured_images', null=True, blank=True)
+    police_station = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
+    location = models.TextField(max_length=1000, default="")
 
-    def save(self, *args, **kwargs):
-        im_pil = Image.fromarray(self.image)
-        buffer = io.BytesIO()
-        im_pil.save(buffer, format='jpeg')
-        img_jpg = buffer.getvalue()
-        self.image.save(str(uuid.uuid4())+'.jpg', ContentFile(img_jpg), save=False)
-        super().save(*args, **kwargs)
+    def __str__(self):
+        return f'{self.police_station}, {self.image} Image'
