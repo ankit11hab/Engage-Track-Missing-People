@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import './AddMissingStyles.css';
 import Default from '../../images/default.jpg';
+import AsyncSelect from 'react-select';
 import Select from 'react-select';
 import { useDispatch } from 'react-redux';
-import { addMissingPerson } from '../../actions/action';
+import { addMissingPerson, autocomplete } from '../../actions/action';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import TextField from '@mui/material/TextField';
@@ -46,6 +47,36 @@ const selectStyle = {
     })
 }
 
+const selectStyle2 = {
+
+    menu: (provided, state) => ({
+        ...provided,
+        width: '100%'
+    }),
+    option: (provided, state) => ({
+        ...provided,
+        backgroundColor: state.isFocused ? '#EBEEF4' : 'white',
+        color: '#636363',
+        padding: 10,
+        margin: '3%',
+        width: "94%",
+        borderRadius: "5px",
+        fontFamily: 'system-ui',
+        fontSize: "14px"
+    }),
+    control: base => ({
+        ...base,
+        color: "red",
+        marginTop: "5px",
+        // This line disable the blue border
+        boxShadow: "none",
+        width: "100%",
+        fontFamily: 'Roboto',
+        fontSize: "14px",
+        background: 'transparent',
+    })
+}
+
 const AddMissingPerson = () => {
 
     const [gender, setGender] = useState("");
@@ -59,6 +90,7 @@ const AddMissingPerson = () => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [trackHistory, setTrackHistory] = useState([{ time_of_tracking: "", location: "" }]);
     const [image, setImage] = useState(null);
+    const [autocompletedLocations, setAutocompletedLocations] =  useState([]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -92,6 +124,12 @@ const AddMissingPerson = () => {
             setShowError(true);
     }
 
+    const getPlaces = async (val) => {
+        const data = await dispatch(autocomplete(val, JSON.parse(localStorage.getItem("authTokens")).access))
+        console.log(data.data.predictions);
+        setAutocompletedLocations(data.data.predictions);
+    }
+
     const handleDateTimeChange = (index, val, type) => {
         let newArr = JSON.parse(JSON.stringify(trackHistory));
 
@@ -99,6 +137,8 @@ const AddMissingPerson = () => {
             newArr[index].time_of_tracking = val;
         if (type === "location") {
             newArr[index].location = val;
+            if(val!=="")
+                getPlaces(val);
         }
 
         setTrackHistory(newArr);
@@ -113,14 +153,14 @@ const AddMissingPerson = () => {
     const handleRemoveTrack = async (index) => {
         console.log(index, trackHistory);
         let newArr = JSON.parse(JSON.stringify(trackHistory));
-        newArr.splice(index,1);
+        newArr.splice(index, 1);
         setTrackHistory(newArr);
     }
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         const image_preview = document.getElementById('image-preview');
-        if(file) {
+        if (file) {
             setImage(file);
             const reader = new FileReader();
             reader.addEventListener("load", () => {
@@ -238,12 +278,21 @@ const AddMissingPerson = () => {
                                         onChange={(e) => handleDateTimeChange(index, e.target.value, "datetime")}
                                     />
                                 </div>
-                                <div>
+                                <div style={{width:"33%"}}>
                                     Location
-                                    <input value={history.location} onChange={(e) => handleDateTimeChange(index, e.target.value, "location")} type="text" style={{ width: "100%", height: "33px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none", marginTop: "5px" }} />
+                                    <input type="text" list="data1" onChange={(e)=>handleDateTimeChange(index, e.target.value, "location")} style={{ width: "96%", margin: "8px 0 5px 0.2px", height: "33px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none" }} id="dropdown-input" />
+                                    <datalist id="data1">
+                                        {
+                                            autocompletedLocations.map((result)=>{
+                                                return(
+                                                    <option value = {result.description} />
+                                                )
+                                            })
+                                        }
+                                    </datalist>
                                 </div>
-                                <div style={{margin:"30px 0 0 30px"}}>
-                                    <button onClick={()=>handleRemoveTrack(index)} style={{backgroundColor:"rgb(250,250,250)", border:"1px solid rgb(230,230,230)", borderRadius:"5px", padding:"3px 3px 3px 3px", cursor:"pointer"}}><DeleteOutlinedIcon style={{fontSize:"20px", color:"rgb(50,50,50)"}} /></button>
+                                <div style={{ margin: "30px 0 0 30px" }}>
+                                    <button onClick={() => handleRemoveTrack(index)} style={{ backgroundColor: "rgb(250,250,250)", border: "1px solid rgb(230,230,230)", borderRadius: "5px", padding: "3px 3px 3px 3px", cursor: "pointer" }}><DeleteOutlinedIcon style={{ fontSize: "20px", color: "rgb(50,50,50)" }} /></button>
                                 </div>
                             </div>
                         )

@@ -11,7 +11,8 @@ const initState = {
     user: localStorage.getItem('authTokens')?JSON.parse(localStorage.getItem('authTokens')):null,
     monitoring: false,
     police_station_details: {},
-    allPersons: []
+    allPersons: [],
+    notifications: []
 }
 
 const rootReducer = (state=initState,action) => {
@@ -54,6 +55,14 @@ const rootReducer = (state=initState,action) => {
         return {
             ...state,
             monitoring: status
+        }
+    }
+
+    if(action.type==='GET_NOTIFICATIONS') {
+        const notifications = action.notifications;
+        return {
+            ...state,
+            notifications: notifications
         }
     }
 

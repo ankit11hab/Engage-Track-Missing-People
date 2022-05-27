@@ -18,6 +18,7 @@ urlpatterns = [
     path('add/track-history-manually', views.addTrackHistoryManually, name='addTrackhistoryManually'),
     path('delete/person', views.deletePerson, name='deletePerson'),
     path('edit/person', views.editPerson, name='editPerson'),
-    path('edit/notification-status', views.editNotificationStatus, name='editNotificationStatus')
+    path('edit/notification-status', views.editNotificationStatus, name='editNotificationStatus'),
+    path('autocomplete', views.autocomplete, name='autocomplete')
 ]
 

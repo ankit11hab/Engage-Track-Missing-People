@@ -18,19 +18,6 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 const style = {
   position: 'absolute',
   top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 320,
-  height: 210,
-  bgcolor: 'background.paper',
-  borderRadius: '6px',
-  boxShadow: 24,
-  p: 4,
-};
-
-const style2 = {
-  position: 'absolute',
-  top: '50%',
   outline: 'none',
   left: '50%',
   transform: 'translate(-50%, -50%)',
@@ -166,6 +153,7 @@ const Header = () => {
       handleloginModalClose();
       const data2 = await dispatch(getPoliceStationDetails(data.data.access));
       setShowError(false);
+      getAllNotifications();
     }
     else {
       setShowError(true);
@@ -174,15 +162,12 @@ const Header = () => {
 
   }
 
-
-  useEffect(async () => {
-    console.log("called");
+  const getAllNotifications = async () => {
     const data = await dispatch(getNotifications(JSON.parse(localStorage.getItem('authTokens')).access));
-    console.log(data);
     if (data.status === 200) {
       let arr = [];
       data.data.map((notification) => {
-        if(notification.seen===false) {
+        if (notification.seen === false) {
           setNotifications(true);
         }
         const option = {
@@ -193,27 +178,16 @@ const Header = () => {
         arr.push(option);
       });
       setNotificationOptions(arr);
-      console.log(arr);
     }
-    setInterval(async () => {
-      console.log("called");
-      const data = await dispatch(getNotifications(JSON.parse(localStorage.getItem('authTokens')).access));
-      console.log(data);
-      if (data.status === 200) {
-        let arr = [];
-        data.data.map((notification) => {
-          if(notification.seen===false) {
-            setNotifications(true);
-          }
-          const option = {
-            value: notification.id,
-            label: <div>{notification.link ? <Link to={notification.link} style={{ textDecoration: "none", color: '#636363' }}>{notification.message}</Link> : notification.message}</div>
-          }
-          arr.push(option);
-        });
-        setNotificationOptions(arr);
-        console.log(arr);
-      }
+  }
+
+
+  useEffect(() => {
+    if(isAuthenticated)
+      getAllNotifications();
+    setInterval(() => {
+      if(isAuthenticated)
+        getAllNotifications();
     }, 5000);
 
   }, [])
@@ -251,8 +225,8 @@ const Header = () => {
   const handleNotificationsSeen = () => {
     setNotifications(false);
     let arr = [];
-    notificationOptions.map((notification)=>{
-      if(!notification.status)
+    notificationOptions.map((notification) => {
+      if (!notification.status)
         arr.push(notification.value);
     })
     const data = dispatch(editNotificationStatus(JSON.parse(localStorage.getItem('authTokens')).access, arr));
@@ -282,12 +256,12 @@ const Header = () => {
         <div style={{ display: "flex" }}>
           <button style={{ background: "rgb(250, 250, 250)", border: "1px solid rgb(230, 230, 230)", cursor: "pointer", borderRadius: "5px", marginLeft: "25px", padding: "6px" }} onClick={() => navigate(-1)}><ArrowBackIcon style={{ color: "rgb(80, 80, 80)", fontSize: "20px" }} /></button>
           <div style={{ marginLeft: "auto" }}>
-            {notifications?
-              <><NotificationsActiveOutlinedIcon style={{ fontSize: "26px", color: "rgb(120, 120, 120)", margin: "12px 0px 10px 0", transform: "translate(81px,0)" }} /><span><FiberManualRecordIcon style={{fontSize:"13px", transform:"translate(67px, -23px)", color:"red"}} /></span></>
+            {notifications ?
+              <><NotificationsActiveOutlinedIcon style={{ fontSize: "26px", color: "rgb(120, 120, 120)", margin: "12px 0px 10px 0", transform: "translate(81px,0)" }} /><span><FiberManualRecordIcon style={{ fontSize: "13px", transform: "translate(67px, -23px)", color: "red" }} /></span></>
               :
               <><NotificationsActiveOutlinedIcon style={{ fontSize: "26px", color: "rgb(120, 120, 120)", margin: "12px 0px 10px 0", transform: "translate(68px,0)" }} /></>
             }
-            
+
           </div>
           <div style={{ marginTop: "6px" }} onClick={handleNotificationsSeen}>
             <Select options={notificationOptions} components={{
@@ -338,7 +312,7 @@ const Header = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <Box sx={{...style, width: "320px", height:"210px"}}>
           <form onSubmit={(e) => e.preventDefault()}>
             <div style={{ fontWeight: "500", fontSize: "14px", color: "rgb(70,70,70)" }}>
               Police Station ID:
@@ -378,7 +352,7 @@ const Header = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style2}>
+        <Box sx={style}>
           <div>
             <button onClick={() => { handleAccountSettingsClose(); navigate('/edit-profile'); }} className='account-btn' style={{ marginBottom: "7px" }}>
               <div style={{ display: "flex", fontSize: "14px", marginBottom: "4px" }}>
@@ -406,7 +380,7 @@ const Header = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={{ ...style2, width: "340px", height: "270px" }}>
+        <Box sx={{ ...style, width: "340px", height: "270px" }}>
           <div>
             <div style={{ display: "flex", width: "100%", fontSize: "14px" }}>
               <div style={{ width: "100%" }}>

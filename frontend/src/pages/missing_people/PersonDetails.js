@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { addTrackHistory, deletePerson, editPersonDetails, getPersonDetails } from '../../actions/action';
+import { addTrackHistory, deletePerson, editPersonDetails, getPersonDetails, autocomplete } from '../../actions/action';
 import Box from '@mui/material/Box';
 import Modal from 'react-modal';
 import Button from '@mui/material/Button';
@@ -124,6 +124,7 @@ const PersonDetails = () => {
     const [timeOfTracking, setTimeOfTracking] = useState("");
     const [location, setLocation] = useState("");
     const [showError, setShowError] = useState(false);
+    const [autocompletedLocations, setAutocompletedLocations] =  useState([]);
     const param = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -214,11 +215,20 @@ const PersonDetails = () => {
         subtitle.style.color = '#f00';
     }
 
+    const getPlaces = async (val) => {
+        const data = await dispatch(autocomplete(val, JSON.parse(localStorage.getItem("authTokens")).access))
+        console.log(data.data.predictions);
+        setAutocompletedLocations(data.data.predictions);
+    }
+
     const handleDateTimeChange = (val, type) => {
         if (type === "datetime")
             setTimeOfTracking(val);
-        if (type === "location")
+        if (type === "location") {
             setLocation(val);
+            if(val!=="")
+                getPlaces(val);
+        }
     }
 
 
@@ -385,7 +395,16 @@ const PersonDetails = () => {
                                 </div>
                                 <div>
                                     Location
-                                    <input onChange={(e) => handleDateTimeChange(e.target.value, "location")} type="text" style={{ width: "100%", height: "33px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none", marginTop: "5px" }} />
+                                    <input type="text" list="data1" onChange={(e)=>handleDateTimeChange(e.target.value, "location")} style={{ width: "96%", margin: "8px 0 5px 0.2px", height: "33px", borderRadius: "5px", border: "1px solid rgb(192, 192, 192)", paddingLeft: "10px", outline: "none" }} id="dropdown-input" />
+                                    <datalist id="data1">
+                                        {
+                                            autocompletedLocations.map((result)=>{
+                                                return(
+                                                    <option value = {result.description} />
+                                                )
+                                            })
+                                        }
+                                    </datalist>
                                 </div>
                             </div>
 

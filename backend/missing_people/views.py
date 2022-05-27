@@ -10,6 +10,8 @@ from django.conf import settings
 import datetime
 import cv2
 import face_recognition
+import requests
+from urllib.parse import urlencode
 
 known_face_encodings = []
 known_face_names = []
@@ -60,7 +62,6 @@ def getAllCriminals(request):
             "details": person.details,
             "image": settings.SERVER_URL+'media/'+person.image.name
         }
-        print(missing_person_details)
         data.append(missing_person_details)
     
     return Response(data, status=status.HTTP_200_OK)
@@ -178,7 +179,6 @@ def getPerson(request):
     missing_person = MissingPerson.objects.filter(person_uuid = data["person_uuid"]).first()
     police_station_details = CustomUser.objects.filter(police_station_uid = missing_person.applicant_police_station.police_station_uid).first()
     location = missing_person.trackhistory_set.all().order_by("-time_of_tracking")
-    print(location)
     track_history = []
     for item in location:
         if item.image.name:
@@ -305,7 +305,6 @@ def addPerson(request):
     user = request.user
     data = request.data
     person_uuid = uuid.uuid4()
-    print("name",data['image'].name)
     MissingPerson(person_uuid = person_uuid, applicant_police_station=user, name = data["name"], image=data['image'], age = data["age"], gender = data["gender"], isCriminal = data["isCriminal"], details = data["details"], applicant_email = data["applicant_email"]).save()
     path = "media/missing_people/"+data['image'].name
     image = face_recognition.load_image_file(path)
@@ -338,7 +337,6 @@ def addTrackHistory(request):
 def addTrackHistoryManually(request):
     data = request.data
     missing_person = MissingPerson.objects.filter(person_uuid=data["person_uuid"]).first()
-    print(missing_person)
     TrackHistory(time_of_tracking=data["time_of_tracking"], missing_person=missing_person, location = data["location"]).save()
     return Response("History updated", status=status.HTTP_200_OK)
 
@@ -382,3 +380,19 @@ def editPerson(request):
         return Response("Person detail edited", status=status.HTTP_200_OK)
     return Response("Can not edit person details", status=status.HTTP_403_FORBIDDEN)
 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def autocomplete(request):
+    lat = "0"
+    lng = "0"
+    query = request.data['query']
+    data_type = "json"
+    endpoint = f"https://maps.googleapis.com/maps/api/place/autocomplete/{data_type}"
+    params = {"location":f"{lat},{lng}","key":"AIzaSyCbcM_1NaJDrnmpCp8XJHGfJwk-l_pW_SY","input":f"{query}"}
+    url_params = urlencode(params)
+    url = f"{endpoint}?{url_params}"
+    res = requests.get(url)
+    if not res.status_code in range(200,299):
+        return {}
+    return Response(res.json())

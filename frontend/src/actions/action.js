@@ -542,7 +542,6 @@ export const getNotifications = (access_token) => async (dispatch) => {
             config_header
         )
 
-        console.log(data);
         return data;
     }
     catch (err) {
@@ -649,6 +648,30 @@ export const changeMonitoringStatus = (status) => async (dispatch) => {
             type: 'MONITORING_CHANGE',
             status: status
         });
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+export const autocomplete = (query, access_token) => async (dispatch) => {
+    let data;
+    try {
+
+        const config_header = {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        };
+        const data = await axios.post(
+            `${config().url}/missing/autocomplete`,
+            {query},
+            config_header
+        )
+
         return data;
     }
     catch (err) {
