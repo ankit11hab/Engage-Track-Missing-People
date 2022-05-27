@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import { useDispatch } from 'react-redux';
-import { addCameraRecord } from '../actions/action';
+import { addCameraRecord, changeMonitoringStatus } from '../actions/action';
 
 const Monitoring = () => {
     const [client, setClient] = useState(null);
     const [picInterval, setPicInterval] = useState(null);
+    const [showConnected, setShowConnected] = useState(true);
     const dispatch = useDispatch();
     const videoRef = useRef(null);
     const photoRef = useRef(null);
@@ -14,7 +15,7 @@ const Monitoring = () => {
         'video': true
     }
 
-    const handleConnect = () => {
+    const handleConnect = async () => {
         let newClient = new W3CWebSocket('ws://127.0.0.1:8000/');
         setClient(newClient)
         newClient.onopen = () => {
@@ -30,11 +31,13 @@ const Monitoring = () => {
                     'location': 'Habra'
                 }
                 const data2 = dispatch(addCameraRecord(details, JSON.parse(localStorage.getItem("authTokens")).access));
-                console.log(data2);
             }
         }
 
+        const data3 = await dispatch(changeMonitoringStatus(true));
+
         handleOpenVideo();
+        setShowConnected(false);
     }
 
 
@@ -47,6 +50,7 @@ const Monitoring = () => {
                 video.srcObject = await stream;
                 await video.play();
                 let newInterval = setInterval(() => {
+                    console.log("going")
                     document.getElementById("take-pic").click();
                 }, 1500);
                 setPicInterval(newInterval);
@@ -54,7 +58,7 @@ const Monitoring = () => {
             .catch(error => console.log(error))
     }
 
-    const handleDisconnect = (e) => {
+    const handleDisconnect = async (e) => {
         let video = videoRef.current;
         const stream = video.srcObject;
         const tracks = stream.getTracks();
@@ -69,7 +73,9 @@ const Monitoring = () => {
         // client.onclose = () => {
         //     console.log("disconnected!");
         // }
-        client.close()
+        client.close();
+        const data3 = await dispatch(changeMonitoringStatus(false));
+        setShowConnected(true);
     }
 
     const takePicture = () => {
@@ -93,12 +99,12 @@ const Monitoring = () => {
         <div>
             <div>
                 <div>
-                    <button style={{marginLeft: "20px",border: "1px solid rgb(192,192,192)", borderRadius: "5px", padding: "6px 12px 6px 12px", cursor: "pointer", background:"white" }} onClick={handleConnect}>Connect with camera</button>
+                    {showConnected?<button style={{border: "1px solid rgb(192,192,192)", borderRadius: "5px", padding: "6px 12px 6px 12px", cursor: "pointer", background:"white" }} onClick={handleConnect}>Connect with camera</button>:<button style={{border: "1px solid rgb(192,192,192)", borderRadius: "5px", padding: "6px 12px 6px 12px", cursor: "pointer", background:"white" }} onClick={handleDisconnect}>Disconnect</button>}
                     <button id="take-pic" style={{display:"none"}} onClick={takePicture}>Take pic</button>
-                    <button style={{marginLeft: "20px",border: "1px solid rgb(192,192,192)", borderRadius: "5px", padding: "6px 12px 6px 12px", cursor: "pointer", background:"white" }} onClick={handleDisconnect}>Disconnect</button>
+                    
                 </div>
-                <div style={{display:"flex", width:"100%"}}>
-                    <div style={{width:"30%"}}><video ref={videoRef} /></div>
+                <div style={{display:"flex", width:"100%", marginTop:"20px"}}>
+                    <div style={{width:"30%"}}><video style={{borderRadius:"10px"}} ref={videoRef} /></div>
                     <div style={{width:"50%", display:"none"}}><canvas ref={photoRef}></canvas></div>
                 </div>
                 

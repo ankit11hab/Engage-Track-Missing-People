@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import './AddMissingStyles.css';
-import Default from '../images/default.jpg';
+import Default from '../../images/default.jpg';
 import Select from 'react-select';
 import { useDispatch } from 'react-redux';
-import { addMissingPerson } from '../actions/action';
+import { addMissingPerson } from '../../actions/action';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import TextField from '@mui/material/TextField';
 import { useNavigate } from "react-router-dom";
 import RefreshIcon from '@mui/icons-material/Refresh';
+import PlacesAutocomplete from 'react-places-autocomplete';
 
 const options = [
     { value: 'M', label: 'Male' },
@@ -96,8 +97,9 @@ const AddMissingPerson = () => {
 
         if (type === "datetime")
             newArr[index].time_of_tracking = val;
-        if (type === "location")
+        if (type === "location") {
             newArr[index].location = val;
+        }
 
         setTrackHistory(newArr);
     }

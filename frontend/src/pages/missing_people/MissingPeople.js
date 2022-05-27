@@ -1,25 +1,18 @@
 import React, { useEffect } from 'react';
 import './MissingPeopleStyles.css';
-import Obama from '../images/obama.jpg';
+import Obama from '../../images/obama.jpg';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllAppliedHere, getAllCriminals, getAllFound, getAllNonCriminals, getAllPersons, getAllTracked } from '../actions/action';
+import { getAllAppliedHere, getAllCriminals, getAllFound, getAllNonCriminals, getAllPersons, getAllTracked } from '../../actions/action';
 import { Link } from 'react-router-dom';
 import Select from 'react-select';
 
 
-const options = [
-  { value: 'A', label: 'All', type: 'all' },
-  { value: 'T', label: 'All tracked', type: 'all' },
-  { value: 'F', label: 'All found', type: 'all' },
-  { value: 'C', label: 'Criminals', type: 'all' },
-  { value: 'N', label: 'Non-criminals', type: 'all' },
-  { value: 'P', label: 'Applied from this police station', type: 'logged' },
-]
+
 
 const options2 = [
   { value: 'A', label: 'All', type: 'all' },
-  { value: 'T', label: 'All tracked', type: 'all' },
-  { value: 'F', label: 'All found', type: 'all' },
+  { value: 'T', label: 'Tracked', type: 'all' },
+  { value: 'F', label: 'Found', type: 'all' },
   { value: 'C', label: 'Criminals', type: 'all' },
   { value: 'N', label: 'Non-criminals', type: 'all' }
 ]
@@ -86,17 +79,17 @@ const MissingPeople = () => {
 
   const handleChange = (val) => {
     console.log(val.value)
-    if(val.value==='A') 
+    if (val.value === 'A')
       getAllMissingPersons();
-    if(val.value==='T') 
+    if (val.value === 'T')
       getAllTrackedPersons();
-    if(val.value==='F') 
+    if (val.value === 'F')
       getAllFoundPersons();
-    if(val.value==='C') 
+    if (val.value === 'C')
       getAllCriminalPersons();
-    if(val.value==='N') 
+    if (val.value === 'N')
       getAllNonCriminalPersons();
-    if(val.value==='P') 
+    if (val.value === 'P')
       getAllAppliedFromHere();
   }
 
@@ -108,41 +101,19 @@ const MissingPeople = () => {
   return (
     <div>
       <div style={{ fontSize: "17px", margin: "0 0 15px 0" }}>List of Missing People</div>
-      <div style={{ display: "flex", background: "white", margin: "10px 25px 20px 25px", padding: "10px", borderRadius: "5px" }}>
-        {JSON.parse(localStorage.getItem("authTokens")) ?JSON.parse(localStorage.getItem("authTokens")).access?
-          <div style={{ width: "300px" }}>
-            <Select options={options} components={{
-              IndicatorSeparator: () => null
-            }}
-              placeholder = 'All'
-              styles={selectStyle}
-              onChange={handleChange}
-            />
-          </div>
-          :
-          <div style={{ width: "300px" }}>
-            <Select options={options2} components={{
-              IndicatorSeparator: () => null
-            }}
-              placeholder = 'All'
-              styles={selectStyle}
-              onChange={handleChange}
-            />
-          </div>
-          :
-          <div style={{ width: "300px" }}>
-            <Select options={options2} components={{
-              IndicatorSeparator: () => null
-            }}
-              placeholder = 'All'
-              styles={selectStyle}
-              onChange={handleChange}
-            />
-          </div>
-        }
+      <div style={{ display: "flex", background: "white", margin: "10px 25px 20px 0", padding: "10px", borderRadius: "5px" }}>
+        <div style={{ width: "300px" }}>
+          <Select options={options2} components={{
+            IndicatorSeparator: () => null
+          }}
+            placeholder='All'
+            styles={selectStyle}
+            onChange={handleChange}
+          />
+        </div>
 
       </div>
-      <div style={{ display: "flex", margin: "0 0 0 25px", flexFlow: "row wrap" }}>
+      <div style={{ display: "flex", flexFlow: "row wrap" }}>
 
         {allPersons.map((person) => {
           return (

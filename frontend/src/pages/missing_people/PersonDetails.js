@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { addTrackHistory, deletePerson, editPersonDetails, getPersonDetails } from '../actions/action';
+import { addTrackHistory, deletePerson, editPersonDetails, getPersonDetails } from '../../actions/action';
 import Box from '@mui/material/Box';
 import Modal from 'react-modal';
 import Button from '@mui/material/Button';

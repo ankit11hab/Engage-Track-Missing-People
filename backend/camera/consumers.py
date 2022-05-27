@@ -4,6 +4,8 @@ import json
 import io
 import cv2
 import numpy as np
+from .utils import createNotification, getTimeDiff
+from missing_people.models import Notifications
 from .models import CameraRecord
 from missing_people.models import MissingPerson, TrackHistory
 import base64
@@ -33,6 +35,7 @@ from django.core.files.base import ContentFile
 #         print(ps)
 
 
+
 class CameraConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_group_name = 'CameraRoom'
@@ -57,7 +60,6 @@ class CameraConsumer(AsyncWebsocketConsumer):
         original_image = image_to_recognize = cv2.imdecode(np_data,cv2.IMREAD_UNCHANGED)
         all_face_locations = face_recognition.face_locations(image_to_recognize,model="hog")
         all_face_encodings = face_recognition.face_encodings(image_to_recognize,all_face_locations)
-        # print(len(all_face_locations))
 
         for current_face_location, current_face_encoding in zip(all_face_locations, all_face_encodings):
             top_pos,right_pos,bottom_pos,left_pos = current_face_location
@@ -81,29 +83,22 @@ class CameraConsumer(AsyncWebsocketConsumer):
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(original_image,name_of_person,(left_pos,bottom_pos), font, 0.5, (0,0,255),1)
             if flag==1:
-                # save_image(self.channel_name, person_uuid)
-                time_now = await sync_to_async(datetime.datetime.now)()
-                time_now_aware = await sync_to_async(time_now.astimezone)()
-                missingPersonArr = await sync_to_async(MissingPerson.objects.filter)(person_uuid=person_uuid)
-                missingPerson = await sync_to_async(missingPersonArr.first)()
-                track_history = await sync_to_async(TrackHistory.objects.filter)(missing_person=missingPerson)
-                
-                last_track = await sync_to_async(track_history.order_by("-time_of_tracking").first)()
-                time_then = last_track.time_of_tracking
-                time_diff = await sync_to_async((time_now_aware - time_then).total_seconds)()/60
+                time_diff = await sync_to_async(getTimeDiff)(person_uuid)
                 print("Time", time_diff)
                 if time_diff>5:
                     camera = await sync_to_async(CameraRecord.objects.get)(channel_name=self.channel_name)
                     location = str(camera.location)
                     await sync_to_async(print)(location)
                     # await sync_to_async(print)(location)
-
+                    missingPersonArr = await sync_to_async(MissingPerson.objects.filter)(person_uuid=person_uuid)
+                    missingPerson = await sync_to_async(missingPersonArr.first)()
                     _, im_arr = cv2.imencode('.jpg', original_image)  # im_arr: image in Numpy one-dim array format.
                     im_bytes = im_arr.tobytes()
                     im_b64 = base64.b64encode(im_bytes)
                     final_img = await sync_to_async(ContentFile)(base64.b64decode(im_b64), name=f'{str(uuid.uuid4())}.jpg')
                     await sync_to_async(print)(final_img)
                     await sync_to_async(TrackHistory(missing_person=missingPerson, location=location, image=final_img).save)()
+                    await sync_to_async(createNotification)(missingPerson)
 
 
     async def disconnect(self, close_code):

@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import uuid
-from .models import MissingPerson, TrackHistory
+from .models import MissingPerson, Notifications, TrackHistory
 from camera.models import CameraRecord
 from authentication.models import CustomUser
 from django.conf import settings
@@ -134,6 +134,44 @@ def getAllFound(request):
     
     return Response(data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMyTracked(request):
+    user = request.user
+    missing_person = MissingPerson.objects.filter(applicant_police_station = user).filter(isTracked=True)
+    data = []
+    for person in missing_person:
+        missing_person_details = {
+            "person_uuid": person.person_uuid,
+            "applicant_police_station": person.applicant_police_station.police_station_uid,
+            "name": person.name,
+            "details": person.details,
+            "image": settings.SERVER_URL+'media/'+person.image.name
+        }
+        data.append(missing_person_details)
+    
+    return Response(data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMyFound(request):
+    user = request.user
+    missing_person = MissingPerson.objects.filter(applicant_police_station = user).filter(isFound=True)
+    data = []
+    for person in missing_person:
+        missing_person_details = {
+            "person_uuid": person.person_uuid,
+            "applicant_police_station": person.applicant_police_station.police_station_uid,
+            "name": person.name,
+            "details": person.details,
+            "image": settings.SERVER_URL+'media/'+person.image.name
+        }
+        data.append(missing_person_details)
+    
+    return Response(data, status=status.HTTP_200_OK)
+
+
 @api_view(['POST'])
 def getPerson(request):
     data = request.data
@@ -177,6 +215,38 @@ def getPerson(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getNotifications(request):
+    user = request.user
+    notifications = Notifications.objects.filter(police_station = user)
+    data = []
+    for notification in notifications:
+        notification_details = {
+            "id": notification.id,
+            "message": notification.message,
+            "link": notification.link,
+            "time": notification.time,
+            "seen": notification.seen,
+        }
+        data.append(notification_details)
+    
+    return Response(data, status=status.HTTP_200_OK)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def editNotificationStatus(request):
+    user = request.user
+    ids = request.data["ids"]
+    for id in ids:
+        notification = Notifications.objects.get(id = id)
+        if notification.police_station==user:
+            notification.seen = True
+            notification.save()
+    return Response("Notification status has been updated", status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
 def getStatistics(request):
     missing_person = MissingPerson.objects.all()
     track_history = TrackHistory.objects.exclude(image__exact='').count()
@@ -194,31 +264,18 @@ def getStatistics(request):
     number_of_persons_enlisted_daywise = [0,0,0,0,0,0,0]
     number_of_persons_found_daywise = [0,0,0,0,0,0,0]
     number_of_persons_tracked_daywise = [0,0,0,0,0,0,0]
-    # for person in missing_person:
-    #     print((datetime.datetime.now().date() - person.time_of_addition.date()).days)
-    #     if person.time_of_addition.date() == datetime.datetime.now().date():
-    #         count_today+=1
-    #     if person.isTracked:
-    #         number_of_persons_tracked+=1
-    #         if person.time_of_first_tracking.date() == datetime.datetime.now().date():
-    #             number_of_persons_tracked_today += 1
-    #     if person.isFound:
-    #         number_of_persons_found+=1
-    #         if person.time_of_found.date() == datetime.datetime.now().date():
-    #             number_of_persons_found_today += 1
-    #     count+=1
     for person in missing_person:
         day_diff = (datetime.datetime.now().date() - person.time_of_addition.date()).days
         if day_diff<=7:
-            number_of_persons_enlisted_daywise[day_diff] += 1
+            number_of_persons_enlisted_daywise[6-day_diff] += 1
         if person.isTracked:
             number_of_persons_tracked+=1
             if (datetime.datetime.now().date() - person.time_of_first_tracking.date()).days<=7:
-                number_of_persons_tracked_daywise[(datetime.datetime.now().date() - person.time_of_first_tracking.date()).days] += 1
+                number_of_persons_tracked_daywise[6-(datetime.datetime.now().date() - person.time_of_first_tracking.date()).days] += 1
         if person.isFound:
             number_of_persons_found+=1
             if (datetime.datetime.now().date() - person.time_of_found.date()).days<=7:
-                number_of_persons_found_daywise[(datetime.datetime.now().date() - person.time_of_found.date()).days] += 1
+                number_of_persons_found_daywise[6-(datetime.datetime.now().date() - person.time_of_found.date()).days] += 1
         count+=1
         
 

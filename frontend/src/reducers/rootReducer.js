@@ -9,6 +9,7 @@ endDate = `${endDate.getFullYear()}-${endDate.getMonth() + 1
 const initState = {
     isAuthenticated:  localStorage.getItem('authTokens')?(JSON.parse(localStorage.getItem('authTokens')).access):false,
     user: localStorage.getItem('authTokens')?JSON.parse(localStorage.getItem('authTokens')):null,
+    monitoring: false,
     police_station_details: {},
     allPersons: []
 }
@@ -45,6 +46,14 @@ const rootReducer = (state=initState,action) => {
         return {
             ...state,
             allPersons: newArr
+        }
+    }
+
+    if(action.type==='MONITORING_CHANGE') {
+        const status = action.status;
+        return {
+            ...state,
+            monitoring: status
         }
     }
 

@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
-import { changePassword, getPoliceStationDetails, loginUser, logoutUser } from '../actions/action';
+import { changePassword, editNotificationStatus, getNotifications, getPoliceStationDetails, loginUser, logoutUser } from '../actions/action';
 import Select from 'react-select';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import LinearProgress from '@mui/material/LinearProgress';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import LogoutIcon from '@mui/icons-material/Logout';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
 const style = {
   position: 'absolute',
@@ -41,8 +46,8 @@ const selectStyle = {
 
   menu: (provided, state) => ({
     ...provided,
-    width: '135px',
-    transform: 'translate(-20px,0)',
+    width: '170px',
+    transform: 'translate(-50px,0)'
   }),
   option: (provided, state) => ({
     ...provided,
@@ -72,9 +77,50 @@ const selectStyle = {
   })
 }
 
+const notificationStyle = {
+
+  menu: (provided, state) => ({
+    ...provided,
+    width: '230px',
+    transform: 'translate(-50px,0)'
+  }),
+  singleValue: (provided, state) => {
+    const display = "none";
+    return { ...provided, display };
+  },
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isFocused ? '#EBEEF4' : 'white',
+    color: '#636363',
+    padding: 10,
+    margin: '3%',
+    width: "94%",
+    borderRadius: "5px",
+    fontFamily: 'system-ui',
+    fontSize: "14px"
+  }),
+  control: base => ({
+    ...base,
+    color: "red",
+    // This line disable the blue border
+    boxShadow: "none",
+    width: "40px",
+    height: "40px",
+    cursor: "pointer",
+    fontFamily: 'Roboto',
+    fontSize: "14px",
+    background: 'transparent',
+    border: "none",
+    fontSize: "0px",
+    margin: "0",
+    transform: "translate(42px, 0)"
+  })
+}
+
 const options = [
-  { value: 'account', label: 'Account settings' },
-  { value: 'logout', label: 'Sign out' },
+  { value: 'mypeople', label: 'My additions', icon: <ManageAccountsOutlinedIcon style={{ fontSize: "20px" }} /> },
+  { value: 'account', label: 'Account settings', icon: <SettingsOutlinedIcon style={{ fontSize: "20px" }} /> },
+  { value: 'logout', label: 'Sign out', icon: <LogoutIcon style={{ fontSize: "20px" }} /> },
 ]
 
 
@@ -90,6 +136,8 @@ const Header = () => {
   const [showError, setShowError] = useState(false);
   const [showLinearProgress, setShowLinearProgress] = useState(false);
   const [confirmNewPassword, setConfirmNewPassword] = useState(false);
+  const [notifications, setNotifications] = useState(false);
+  const [notificationOptions, setNotificationOptions] = useState({});
   const handleloginModalOpen = () => setLoginModalOpen(true);
   const handleloginModalClose = () => {
     setShowError(false);
@@ -126,6 +174,51 @@ const Header = () => {
 
   }
 
+
+  useEffect(async () => {
+    console.log("called");
+    const data = await dispatch(getNotifications(JSON.parse(localStorage.getItem('authTokens')).access));
+    console.log(data);
+    if (data.status === 200) {
+      let arr = [];
+      data.data.map((notification) => {
+        if(notification.seen===false) {
+          setNotifications(true);
+        }
+        const option = {
+          value: notification.id,
+          label: <div>{notification.link ? <Link to={notification.link} style={{ textDecoration: "none", color: '#636363' }}>{notification.message}</Link> : notification.message}</div>,
+          status: notification.seen
+        }
+        arr.push(option);
+      });
+      setNotificationOptions(arr);
+      console.log(arr);
+    }
+    setInterval(async () => {
+      console.log("called");
+      const data = await dispatch(getNotifications(JSON.parse(localStorage.getItem('authTokens')).access));
+      console.log(data);
+      if (data.status === 200) {
+        let arr = [];
+        data.data.map((notification) => {
+          if(notification.seen===false) {
+            setNotifications(true);
+          }
+          const option = {
+            value: notification.id,
+            label: <div>{notification.link ? <Link to={notification.link} style={{ textDecoration: "none", color: '#636363' }}>{notification.message}</Link> : notification.message}</div>
+          }
+          arr.push(option);
+        });
+        setNotificationOptions(arr);
+        console.log(arr);
+      }
+    }, 5000);
+
+  }, [])
+
+
   const changePasswordFunc = async (currentPassword, newPassword) => {
     const details = {
       current_password: currentPassword,
@@ -147,12 +240,22 @@ const Header = () => {
   const handleChangePassword = async () => {
     setShowError(false);
     setShowLinearProgress(true);
-    if(newPassword===confirmNewPassword)
+    if (newPassword === confirmNewPassword)
       changePasswordFunc(currentPassword, newPassword);
     else {
       setShowLinearProgress(false);
       setShowError(true);
     }
+  }
+
+  const handleNotificationsSeen = () => {
+    setNotifications(false);
+    let arr = [];
+    notificationOptions.map((notification)=>{
+      if(!notification.status)
+        arr.push(notification.value);
+    })
+    const data = dispatch(editNotificationStatus(JSON.parse(localStorage.getItem('authTokens')).access, arr));
   }
 
   const handleLogout = async () => {
@@ -161,6 +264,8 @@ const Header = () => {
   }
 
   const handleChange = (e) => {
+    if (e.value === 'mypeople')
+      navigate('/my-people')
     if (e.value === 'logout')
       handleLogout();
     if (e.value === 'account')
@@ -175,10 +280,30 @@ const Header = () => {
 
       {isAuthenticated ?
         <div style={{ display: "flex" }}>
+          <button style={{ background: "rgb(250, 250, 250)", border: "1px solid rgb(230, 230, 230)", cursor: "pointer", borderRadius: "5px", marginLeft: "25px", padding: "6px" }} onClick={() => navigate(-1)}><ArrowBackIcon style={{ color: "rgb(80, 80, 80)", fontSize: "20px" }} /></button>
           <div style={{ marginLeft: "auto" }}>
-            <NotificationsActiveOutlinedIcon style={{ fontSize: "27px", color: "rgb(150, 150, 150)", margin: "12px 8px 10px 0", transform: "translate(62px,0)" }} />
+            {notifications?
+              <><NotificationsActiveOutlinedIcon style={{ fontSize: "26px", color: "rgb(120, 120, 120)", margin: "12px 0px 10px 0", transform: "translate(81px,0)" }} /><span><FiberManualRecordIcon style={{fontSize:"13px", transform:"translate(67px, -23px)", color:"red"}} /></span></>
+              :
+              <><NotificationsActiveOutlinedIcon style={{ fontSize: "26px", color: "rgb(120, 120, 120)", margin: "12px 0px 10px 0", transform: "translate(68px,0)" }} /></>
+            }
+            
           </div>
-          <div style={{ fontSize: "14px", fontWeight: "500", color: "rgb(52, 52, 52)", margin: "15px 0px 10px 10px", transform: "translate(62px,0)" }}>
+          <div style={{ marginTop: "6px" }} onClick={handleNotificationsSeen}>
+            <Select options={notificationOptions} components={{
+              IndicatorSeparator: () => null,
+              DropdownIndicator: () => null
+            }}
+              onChange={handleChange}
+              styles={notificationStyle}
+              getOptionLabel={e => (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ marginLeft: 5 }}>{e.label}</span>
+                </div>
+              )}
+            />
+          </div>
+          <div style={{ fontSize: "14px", fontWeight: "500", color: "rgb(52, 52, 52)", margin: "15px 0px 10px 0", transform: "translate(62px,0)" }}>
             {psd.police_station_uid}
           </div>
           <button style={{ margin: "0 25px 0 0", fontWeight: "400", color: "#3f7bea", border: "none", outline: "none", cursor: "pointer", background: "white", fontSize: "16px", textAlign: "left" }}>
@@ -187,6 +312,12 @@ const Header = () => {
             }}
               onChange={handleChange}
               styles={selectStyle}
+              getOptionLabel={e => (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  {e.icon}
+                  <span style={{ marginLeft: 5 }}>{e.label}</span>
+                </div>
+              )}
             />
           </button>
 
@@ -195,9 +326,9 @@ const Header = () => {
         :
         <div style={{ display: "flex" }}>
           <div style={{ marginLeft: "auto" }}>
-            <NotificationsActiveOutlinedIcon style={{ fontSize: "27px", color: "rgb(150, 150, 150)", margin: "12px 8px 10px 0" }} />
+
           </div>
-          <button onClick={handleloginModalOpen} style={{ margin: "6px 30px 10px 10px", fontWeight: "500", color: "#3f7bea", border: "none", outline: "none", cursor: "pointer", background: "white", fontSize: "15px" }}>Sign In</button>
+          <button onClick={handleloginModalOpen} style={{ margin: "14px 38px 10px 6px", fontWeight: "500", color: "#3f7bea", border: "none", outline: "none", cursor: "pointer", background: "white", fontSize: "14px" }}>Sign In</button>
         </div>
       }
 

@@ -47,7 +47,7 @@ const options = {
     maintainAspectRatio: false
 };
 
-const labels = ['18th', '19th', '20th', '21st', '22nd', '23rd', 'Today'];
+
 
 
 
@@ -55,6 +55,7 @@ const labels = ['18th', '19th', '20th', '21st', '22nd', '23rd', 'Today'];
 const Statistics = () => {
     const dispatch = useDispatch();
     const [stats, setStats] = useState({});
+    const [labels, setLabels] = useState(['', '', '', '', '', '', '']);
     const [isLoading, setIsLoading] = useState(true);
 
     const getAllStats = async () => {
@@ -66,25 +67,37 @@ const Statistics = () => {
 
     useEffect(async () => {
         await getAllStats();
+        let dates = [];
+        
+        let d = new Date();
+
+        for(let i = 1;i<=7;i++) {
+            const date = d.getDate().toString()+'/'+(d.getMonth()+1).toString();
+            dates.push(date);
+            const timeStamp = d.getTime();
+            const yesterdayTimeStamp = timeStamp - 24*60*60*1000;
+            d = new Date(yesterdayTimeStamp);
+        }
+        setLabels(dates.reverse());
     }, [])
 
     const data = {
         labels,
         datasets: [
             {
-                label: 'Dataset 1',
+                label: 'Enlisted',
                 data: stats.enlisted_daywise,
                 borderColor: 'rgb(255, 99, 132)',
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
             },
             {
-                label: 'Dataset 2',
+                label: 'Tracked',
                 data: stats.tracked_daywise,
                 borderColor: 'rgb(53, 162, 235)',
                 backgroundColor: 'rgba(53, 162, 235, 0.5)',
             },
             {
-                label: 'Dataset 3',
+                label: 'Found',
                 data: stats.found_daywise,
                 borderColor: 'green',
                 backgroundColor: 'rgba(53, 162, 235, 0.5)',
@@ -113,7 +126,7 @@ const Statistics = () => {
                                                 Persons Enlisted
                                             </div>
                                             <div style={{ fontSize: "20px", fontWeight: "500" }}>
-                                                {stats.enlisted} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.enlisted_daywise[0]}↑</span>
+                                                {stats.enlisted} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.enlisted_daywise[6]}↑</span>
                                             </div>
                                         </div>
                                     </div>
@@ -134,7 +147,7 @@ const Statistics = () => {
                                                 Persons Tracked
                                             </div>
                                             <div style={{ fontSize: "20px", fontWeight: "500" }}>
-                                                {stats.tracked} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.tracked_daywise[0]}↑</span>
+                                                {stats.tracked} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.tracked_daywise[6]}↑</span>
                                             </div>
                                         </div>
                                     </div>
@@ -154,7 +167,7 @@ const Statistics = () => {
                                                 Persons Found
                                             </div>
                                             <div style={{ fontSize: "20px", fontWeight: "500" }}>
-                                                {stats.found} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.found_daywise[0]}↑</span>
+                                                {stats.found} <span style={{ fontSize: "14px", fontWeight: "500", color: "green", marginLeft: "6px" }}>{stats.found_daywise[6]}↑</span>
                                             </div>
                                         </div>
                                     </div>
@@ -171,7 +184,24 @@ const Statistics = () => {
                                     <Line options={options} data={data} />
                                 </div>
                                 <div style={{marginTop:"25px", display:"flex", fontSize:"12px"}}>
-                                    KJnl
+                                    <div style={{width:"18px", height:"9px", background:"rgba(255, 99, 132, 0.5)", border:"1px solid rgb(255, 99, 132)", transform:"translate(0,3px)", marginRight:"6px"}}>
+
+                                    </div>
+                                    <div>
+                                        Enlisted
+                                    </div>
+                                    <div style={{width:"18px", height:"9px", background:"rgba(53, 162, 235, 0.5)", border:"1px solid rgb(53, 162, 235)", transform:"translate(0,3px)", marginRight:"6px", marginLeft:"24px"}}>
+
+                                    </div>
+                                    <div>
+                                        Tracked
+                                    </div>
+                                    <div style={{width:"18px", height:"9px", background:"rgb(0,188,100)", border:"1px solid green", transform:"translate(0,3px)", marginRight:"6px", marginLeft:"24px", opacity:"0.6"}}>
+
+                                    </div>
+                                    <div>
+                                        Found
+                                    </div>
                                 </div>
                             </div>
                             <div className='graph-card' style={{ width: "32%", display:"flex", flexDirection:"column" }}>

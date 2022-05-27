@@ -1,6 +1,6 @@
 import React from 'react';
 import './DashboardStyles.css';
-import Statistics from '../components/Statistics';
+import Statistics from '../../components/Statistics';
 
 const Dashboard = () => {
 

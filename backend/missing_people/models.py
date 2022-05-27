@@ -50,6 +50,7 @@ class TrackHistory(models.Model):
 class Notifications(models.Model):
     police_station = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     message = models.CharField(max_length=200, default="")
+    link = models.CharField(max_length=200, null=True, blank=True)
     time = models.DateTimeField(default=datetime.datetime.now())
     seen = models.BooleanField(default=False)
 

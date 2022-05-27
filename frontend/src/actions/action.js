@@ -1,7 +1,5 @@
 import axios from "axios";
-import jwt_decode from 'jwt-decode'
 import { config } from "../config";
-import { useSelector } from 'react-redux';
 
 const configHeaders = localStorage.getItem('authTokens') ? {
     headers: {
@@ -41,6 +39,50 @@ export const logoutUser = () => async (dispatch) => {
     }
 }
 
+export const registerUser = (access_token, details) => async (dispatch) => {
+    try {
+        const config_header = {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        };
+
+        const data = await axios.post(
+            `${config().url}/auth/register/`,
+            details,
+            config_header
+        )
+        return data;
+    }
+    catch (error) {
+        return { status: false };
+    }
+}
+
+export const registerUserBulk = (access_token, csvFile) => async (dispatch) => {
+    try {
+        const config_header = {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+                'content-type': 'multipart/form-data'
+            },
+        };
+
+        const formData = new FormData();
+        formData.append('file', csvFile)
+
+        const data = await axios.post(
+            `${config().url}/auth/register-bulk/`,
+            formData,
+            config_header
+        )
+        return data;
+    }
+    catch (error) {
+        return { status: false };
+    }
+}
+
 
 export const updateToken = () => async (dispatch) => {
     try {
@@ -66,7 +108,7 @@ export const updateToken = () => async (dispatch) => {
 setInterval(() => {
     if (localStorage.getItem('authTokens'))
         updateToken()
-}, 240000);
+}, 1000);
 
 
 export const changePassword = (details, access_token) => async (dispatch) => {
@@ -87,7 +129,7 @@ export const changePassword = (details, access_token) => async (dispatch) => {
     }
     catch (err) {
         console.log("Error:", err);
-        return {status:false};
+        return { status: false };
     }
 
     return data;
@@ -257,6 +299,30 @@ export const getAllPersons = () => async (dispatch) => {
     return data;
 }
 
+export const getAllPoliceStations = (access_token) => async (dispatch) => {
+    let data;
+    try {
+        const config_header = {
+            headers: {
+                Authorization: `Bearer ${access_token}`
+            },
+        };
+
+        const data = await axios.get(
+            `${config().url}/auth/get/all-police-stations`,
+            config_header
+        )
+
+        console.log(data);
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
 export const getAllCriminals = () => async (dispatch) => {
     let data;
     try {
@@ -378,6 +444,64 @@ export const getAllFound = (access_token) => async (dispatch) => {
     return data;
 }
 
+
+export const getMyTracked = (access_token) => async (dispatch) => {
+    let data;
+    try {
+        const config_header = {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        };
+
+        const data = await axios.get(
+            `${config().url}/missing/get/my-tracked`,
+            config_header
+        )
+        dispatch({
+            type: 'GET_PERSONS',
+            allPersons: data.data
+        });
+
+        console.log(data);
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+
+export const getMyFound = (access_token) => async (dispatch) => {
+    let data;
+    try {
+
+        const config_header = {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        };
+        const data = await axios.get(
+            `${config().url}/missing/get/my-found`,
+            config_header
+        )
+        dispatch({
+            type: 'GET_PERSONS',
+            allPersons: data.data
+        });
+
+        console.log(data);
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
 export const getPersonDetails = (person_uuid) => async (dispatch) => {
     let data;
     try {
@@ -395,6 +519,55 @@ export const getPersonDetails = (person_uuid) => async (dispatch) => {
             form_data,
             config_header
         )
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+export const getNotifications = (access_token) => async (dispatch) => {
+    let data;
+    try {
+        const config_header = {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        };
+
+        const data = await axios.get(
+            `${config().url}/missing/get/notifications`,
+            config_header
+        )
+
+        console.log(data);
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+export const editNotificationStatus = (access_token, arr) => async (dispatch) => {
+    let data;
+    try {
+        let details = { ids: arr }
+        const config_header = {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        };
+        const data = await axios.put(
+            `${config().url}/missing/edit/notification-status`,
+            details,
+            config_header
+        )
+
+
         return data;
     }
     catch (err) {
@@ -460,6 +633,22 @@ export const editPersonDetails = (access_token, details) => async (dispatch) => 
         )
 
 
+        return data;
+    }
+    catch (err) {
+        console.log("Error:", err);
+    }
+
+    return data;
+}
+
+export const changeMonitoringStatus = (status) => async (dispatch) => {
+    let data;
+    try {
+        dispatch({
+            type: 'MONITORING_CHANGE',
+            status: status
+        });
         return data;
     }
     catch (err) {
