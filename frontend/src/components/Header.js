@@ -200,7 +200,6 @@ const Header = () => {
       new_password: newPassword,
     }
     const data = await dispatch(changePassword(details, JSON.parse(localStorage.getItem('authTokens')).access));
-    console.log(data);
     if (data.status === 200) {
       setShowLinearProgress(false);
       setShowError(false);
@@ -234,7 +233,6 @@ const Header = () => {
   }
 
   const handleLogout = async () => {
-    console.log("clicked")
     await dispatch(logoutUser())
   }
 

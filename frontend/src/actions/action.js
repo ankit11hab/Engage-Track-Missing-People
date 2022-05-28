@@ -1,12 +1,6 @@
 import axios from "axios";
 import { config } from "../config";
 
-const configHeaders = localStorage.getItem('authTokens') ? {
-    headers: {
-        'Authorization': `Bearer ${JSON.parse(localStorage.getItem('authTokens')).access}`
-    }
-} : ""
-
 export const loginUser = (police_station_uid, password) => async (dispatch) => {
     try {
         const data = await axios.post(
@@ -149,13 +143,12 @@ export const getPoliceStationDetails = (access_token) => async (dispatch) => {
             `${config().url}/auth/get-details/`,
             config_header
         )
-        console.log("ok")
         dispatch({
             type: 'GET_PS_DETAILS',
             police_station_details: data.data
         });
 
-        console.log(data);
+        return data;
     }
     catch (err) {
         console.log("Error:", err);
@@ -193,7 +186,6 @@ export const editPoliceStationDetails = (access_token, details) => async (dispat
 
 export const addMissingPerson = (detail, access_token) => async (dispatch) => {
     try {
-        console.log(detail)
         const config_header = {
             headers: {
                 Authorization: `Bearer ${access_token}`,
@@ -283,13 +275,11 @@ export const getAllPersons = () => async (dispatch) => {
         const data = await axios.get(
             `${config().url}/missing/get/all-persons`
         )
-        console.log("ok")
         dispatch({
             type: 'GET_PERSONS',
             allPersons: data.data
         });
 
-        console.log(data);
         return data;
     }
     catch (err) {
@@ -313,7 +303,6 @@ export const getAllPoliceStations = (access_token) => async (dispatch) => {
             config_header
         )
 
-        console.log(data);
         return data;
     }
     catch (err) {
@@ -329,13 +318,11 @@ export const getAllCriminals = () => async (dispatch) => {
         const data = await axios.get(
             `${config().url}/missing/get/all-criminals`
         )
-        console.log("ok")
         dispatch({
             type: 'GET_PERSONS',
             allPersons: data.data
         });
 
-        console.log(data);
         return data;
     }
     catch (err) {
@@ -352,13 +339,10 @@ export const getAllNonCriminals = () => async (dispatch) => {
         const data = await axios.get(
             `${config().url}/missing/get/all-non-criminals`
         )
-        console.log("ok")
         dispatch({
             type: 'GET_PERSONS',
             allPersons: data.data
         });
-
-        console.log(data);
         return data;
     }
     catch (err) {
@@ -382,13 +366,11 @@ export const getAllAppliedHere = (access_token) => async (dispatch) => {
             `${config().url}/missing/get/all-applied-from-here`,
             config_header
         )
-        console.log("ok")
         dispatch({
             type: 'GET_PERSONS',
             allPersons: data.data
         });
 
-        console.log(data);
         return data;
     }
     catch (err) {
@@ -405,13 +387,11 @@ export const getAllTracked = (access_token) => async (dispatch) => {
         const data = await axios.get(
             `${config().url}/missing/get/all-tracked`
         )
-        console.log("ok")
         dispatch({
             type: 'GET_PERSONS',
             allPersons: data.data
         });
 
-        console.log(data);
         return data;
     }
     catch (err) {
@@ -428,13 +408,10 @@ export const getAllFound = (access_token) => async (dispatch) => {
         const data = await axios.get(
             `${config().url}/missing/get/all-found`
         )
-        console.log("ok")
         dispatch({
             type: 'GET_PERSONS',
             allPersons: data.data
         });
-
-        console.log(data);
         return data;
     }
     catch (err) {
@@ -463,7 +440,6 @@ export const getMyTracked = (access_token) => async (dispatch) => {
             allPersons: data.data
         });
 
-        console.log(data);
         return data;
     }
     catch (err) {
@@ -492,7 +468,6 @@ export const getMyFound = (access_token) => async (dispatch) => {
             allPersons: data.data
         });
 
-        console.log(data);
         return data;
     }
     catch (err) {

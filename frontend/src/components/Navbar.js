@@ -25,13 +25,11 @@ const Navbar = () => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const isAuthenticated = useSelector(state => state.isAuthenticated)
   const user = useSelector(state => state.police_station_details)
-  console.log(user);
   const monitoring = useSelector(state => state.monitoring)
 
   useEffect(() => {
     switch (location.pathname) {
       case '/':
-        console.log("Ok")
         setSelectedIndex(1)
         break;
       case '/missing-people':
@@ -46,12 +44,9 @@ const Navbar = () => {
       case '/police-stations':
         setSelectedIndex(5)
     }
-    console.log(selectedIndex)
   })
 
 
-
-  console.log('Path:', location.pathname)
   return (
     <div className='left-nav-outer' style={{ position: "relative" }}>
       <div className='left-nav'>

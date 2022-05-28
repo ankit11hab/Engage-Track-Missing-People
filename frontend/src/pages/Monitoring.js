@@ -31,11 +31,11 @@ const Monitoring = () => {
                     'channel_name': data.channel_name,
                     'location': 'Habra'
                 }
-                const data2 = dispatch(addCameraRecord(details, JSON.parse(localStorage.getItem("authTokens")).access));
+                dispatch(addCameraRecord(details, JSON.parse(localStorage.getItem("authTokens")).access));
             }
         }
 
-        const data3 = await dispatch(changeMonitoringStatus(true));
+        await dispatch(changeMonitoringStatus(true));
 
         handleOpenVideo();
         setShowConnected(false);

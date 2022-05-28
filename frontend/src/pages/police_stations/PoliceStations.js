@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import CircularProgress from '@mui/material/CircularProgress';
 import '../missing_people/AddMissingStyles.css';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -10,13 +9,9 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { getAllPoliceStations, getPoliceStationDetails } from '../../actions/action';
+import { getAllPoliceStations } from '../../actions/action';
 
-function createData(
-  police_station_uid, location, phone, email
-) {
-  return { police_station_uid, location, phone, email };
-}
+
 
 
 
@@ -25,11 +20,13 @@ const PoliceStations = () => {
   const [rows, setRows] = useState([]);
   const dispatch = useDispatch();
 
-  useEffect(async () => {
-    const data = await dispatch(getAllPoliceStations(JSON.parse(localStorage.getItem("authTokens")).access))
-    console.log(data.data)
-    setRows(data.data)
-  }, [])
+  useEffect(() => {
+    const getPoliceStations = async () => {
+      const data = await dispatch(getAllPoliceStations(JSON.parse(localStorage.getItem("authTokens")).access))
+      setRows(data.data)
+    }
+    getPoliceStations();
+  }, [dispatch])
   
 
   return (

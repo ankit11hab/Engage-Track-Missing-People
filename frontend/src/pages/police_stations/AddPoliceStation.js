@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { registerUser, registerUserBulk } from '../../actions/action';
 import CircularProgress from '@mui/material/CircularProgress';
 import '../missing_people/AddMissingStyles.css';
 
 const AddPoliceStation = () => {
   const dispatch = useDispatch();
-  const psd = useSelector(state => state.police_station_details);
   const [showError, setShowError] = useState(false);
   const [showError2, setShowError2] = useState(false);
   const [file, setFile] = useState({ filename: "" });
@@ -15,7 +14,6 @@ const AddPoliceStation = () => {
   const [isLoading2, setIsLoading2] = useState(false);
 
   const handleRefresh = () => {
-    console.log(document.getElementById('location-input'))
     document.getElementById('id-input').value = "";
     document.getElementById('location-input').value = "";
     document.getElementById('phone-input').value = "";
@@ -34,7 +32,6 @@ const AddPoliceStation = () => {
   }
 
   const registerUserFunc = async (newDetail) => {
-    console.log(newDetail);
     const data = await dispatch(registerUser(JSON.parse(localStorage.getItem("authTokens")).access, newDetail));
     if (data.status === 200)
       setShowError2(false);
@@ -74,8 +71,6 @@ const AddPoliceStation = () => {
   }
 
   const handleFileChange = (e) => {
-    let name = e.target.files[0].name
-    console.log(e.target.files[0].name);
     setFile(e.target.files[0]);
   }
 
@@ -97,7 +92,7 @@ const AddPoliceStation = () => {
           </div>
           <div style={{ display: "flex" }}>
           <div style={{fontSize:"12px", color:"red", margin: "5px 10px 10px 50px"}}>
-              {showError?"* Police Stations could not be added":null}
+              {showError2?"* Police Stations could not be added":null}
             </div>
             <div style={{ marginLeft: "auto", marginBottom: "30px" }}>
               {isLoading ?

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { editPoliceStationDetails } from '../../actions/action';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -11,7 +11,6 @@ const EditProfile = () => {
     const [isLoading, setIsLoading] = useState(false)
     
     const handleRefresh = () => {
-        console.log(document.getElementById('location-input'))
         document.getElementById('location-input').value = psd.location;
         document.getElementById('phone-input').value = psd.phone;
         document.getElementById('email-input').value = psd.email;
@@ -41,10 +40,7 @@ const EditProfile = () => {
             newDetail = {...newDetail, phone:details.phone};
         if(details.email&&details.email !== psd.email)
             newDetail = {...newDetail, email:details.email};
-        console.log(newDetail)
-        console.log(details)
         const data = await dispatch(editPoliceStationDetails(JSON.parse(localStorage.getItem("authTokens")).access, newDetail));
-        console.log(data);
         setIsLoading(false);
     }
 

@@ -2,10 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTrackHistory, deletePerson, editPersonDetails, getPersonDetails, autocomplete } from '../../actions/action';
-import Box from '@mui/material/Box';
 import Modal from 'react-modal';
-import Button from '@mui/material/Button';
-import PhotoIcon from '@mui/icons-material/Photo';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
@@ -134,33 +131,31 @@ const PersonDetails = () => {
     const handleDelete = async () => {
         setIsLoading(true);
         const data = await dispatch(deletePerson(person_uuid, JSON.parse(localStorage.getItem("authTokens")).access))
-        console.log(data);
         setIsLoading(false);
         navigate(`/missing-people`);
     }
 
     const handleSave = async () => {
         setIsLoading(true);
-        console.log(person.isCriminal, isCriminal);
         let details = { person_uuid };
-        if (name != "" && person.name !== name)
+        if (name !== "" && person.name !== name)
             details.name = name;
-        if (about != "" && person.details !== about)
+        if (about !== "" && person.details !== about)
             details.details = about;
-        if (age != 0 && person.age !== age)
+        if (age !== 0 && person.age !== age)
             details.age = age;
-        if (email != 0 && person.applicant_email !== email)
+        if (email !== 0 && person.applicant_email !== email)
             details.applicant_email = email;
-        if (gender != "" && person.gender !== gender)
+        if (gender !== "" && person.gender !== gender)
             details.gender = gender;
-        if (isCriminal != "-1" && person.isCriminal !== isCriminal)
+        if (isCriminal !== "-1" && person.isCriminal !== isCriminal)
             details.isCriminal = isCriminal;
-        if (isTracked != "-1" && person.isTracked !== isTracked)
+        if (isTracked !== "-1" && person.isTracked !== isTracked)
             details.isTracked = isTracked;
-        if (isFound != "-1" && person.isFound !== isFound)
+        if (isFound !== "-1" && person.isFound !== isFound)
             details.isFound = isFound;
 
-        const data = await dispatch(editPersonDetails(JSON.parse(localStorage.getItem("authTokens")).access, details));
+        await dispatch(editPersonDetails(JSON.parse(localStorage.getItem("authTokens")).access, details));
         const data2 = await dispatch(getPersonDetails(person_uuid));
         setPerson(data2.data);
         setIsLoading(false);
@@ -171,7 +166,7 @@ const PersonDetails = () => {
     const handleAdd = async () => {
         setShowError(false);
         setIsLoading(true);
-        if(location==""||timeOfTracking=="") {
+        if(location===""||timeOfTracking==="") {
             setIsLoading(false);
             setShowError(true);
             return;
@@ -185,7 +180,6 @@ const PersonDetails = () => {
 
     const handleChange = (val) => {
         setGender(val.value)
-        console.log(val);
     }
 
     const handleOpenDeleteModal = () => {
@@ -217,7 +211,6 @@ const PersonDetails = () => {
 
     const getPlaces = async (val) => {
         const data = await dispatch(autocomplete(val, JSON.parse(localStorage.getItem("authTokens")).access))
-        console.log(data.data.predictions);
         setAutocompletedLocations(data.data.predictions);
     }
 
@@ -234,7 +227,6 @@ const PersonDetails = () => {
 
     useEffect(async () => {
         const data = await dispatch(getPersonDetails(person_uuid));
-        console.log(data.data);
         setPerson(data.data);
     }, []);
 

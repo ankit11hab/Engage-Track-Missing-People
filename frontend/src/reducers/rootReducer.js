@@ -1,11 +1,3 @@
-import jwt_decode from "jwt-decode";
-
-let endDate = new Date();
-const startDate = `${endDate.getFullYear() - 3}-${endDate.getMonth() + 1
-    }-${endDate.getDate()}`
-endDate = `${endDate.getFullYear()}-${endDate.getMonth() + 1
-    }-${endDate.getDate()}`
-
 const initState = {
     isAuthenticated:  localStorage.getItem('authTokens')?(JSON.parse(localStorage.getItem('authTokens')).access):false,
     user: localStorage.getItem('authTokens')?JSON.parse(localStorage.getItem('authTokens')):null,
@@ -16,7 +8,6 @@ const initState = {
 }
 
 const rootReducer = (state=initState,action) => {
-    console.log(action);
 
     if(action.type==='LOGIN_USER') {
         return {

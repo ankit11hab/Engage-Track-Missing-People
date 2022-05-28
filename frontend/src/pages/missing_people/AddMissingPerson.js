@@ -96,11 +96,9 @@ const AddMissingPerson = () => {
 
     const handleChange = (val) => {
         setGender(val.value)
-        console.log(val);
     }
 
     const handleSubmit = async () => {
-        console.log(firstName, age, gender, email);
         if (firstName && age && gender) {
             const name = firstName + " " + lastName;
             const detail = {
@@ -115,9 +113,7 @@ const AddMissingPerson = () => {
                 },
                 trackHistory: trackHistory
             }
-            console.log(detail)
             const data = await dispatch(addMissingPerson(detail, JSON.parse(localStorage.getItem("authTokens")).access));
-            console.log(data);
             setShowSuccess(true);
         }
         else
@@ -126,7 +122,6 @@ const AddMissingPerson = () => {
 
     const getPlaces = async (val) => {
         const data = await dispatch(autocomplete(val, JSON.parse(localStorage.getItem("authTokens")).access))
-        console.log(data.data.predictions);
         setAutocompletedLocations(data.data.predictions);
     }
 
@@ -151,7 +146,6 @@ const AddMissingPerson = () => {
     }
 
     const handleRemoveTrack = async (index) => {
-        console.log(index, trackHistory);
         let newArr = JSON.parse(JSON.stringify(trackHistory));
         newArr.splice(index, 1);
         setTrackHistory(newArr);

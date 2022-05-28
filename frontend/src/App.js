@@ -7,7 +7,7 @@ import AddMissingPerson from "./pages/missing_people/AddMissingPerson";
 import Dashboard from "./pages/dashboard/Dashboard";
 import MissingPeople from "./pages/missing_people/MissingPeople";
 import PrivateRoute from "./utils/PrivateRoute";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { getPoliceStationDetails } from "./actions/action";
 import EditProfile from "./pages/user/EditProfile";
 import Refresh from "./components/Refresh";

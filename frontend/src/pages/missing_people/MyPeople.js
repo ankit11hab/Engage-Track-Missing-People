@@ -63,7 +63,6 @@ const MyPeople = () => {
   }
 
   const handleChange = (val) => {
-    console.log(val.value)
     if(val.value==='A') 
       getAllAppliedFromHere();
     if(val.value==='T') 

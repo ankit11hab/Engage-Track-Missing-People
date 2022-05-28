@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import './MissingPeopleStyles.css';
-import Obama from '../../images/obama.jpg';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllAppliedHere, getAllCriminals, getAllFound, getAllNonCriminals, getAllPersons, getAllTracked } from '../../actions/action';
 import { Link } from 'react-router-dom';
