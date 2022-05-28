@@ -128,7 +128,7 @@ const Statistics = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div style={{ marginTop: "20px"}}><Link to='/missing-people' style={{ fontSize: "13px", color: "#3f7bea", fontWeight: "500", textDecoration:"none" }}>
+                                    <div style={{ marginTop: "25px"}}><Link to='/missing-people' style={{ fontSize: "13px", color: "#3f7bea", fontWeight: "500", textDecoration:"none" }}>
                                         View all
                                     </Link></div>
                                 </div>
@@ -149,7 +149,7 @@ const Statistics = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div style={{ marginTop: "20px"}}><Link to='/missing-people' style={{ fontSize: "13px", color: "#3f7bea", fontWeight: "500", textDecoration:"none" }}>
+                                    <div style={{ marginTop: "25px"}}><Link to='/missing-people' style={{ fontSize: "13px", color: "#3f7bea", fontWeight: "500", textDecoration:"none" }}>
                                         View all
                                     </Link></div>
                                 </div>
@@ -169,16 +169,16 @@ const Statistics = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div style={{ marginTop: "20px"}}><Link to='/missing-people' style={{ fontSize: "13px", color: "#3f7bea", fontWeight: "500", textDecoration:"none" }}>
+                                    <div style={{ marginTop: "25px"}}><Link to='/missing-people' style={{ fontSize: "13px", color: "#3f7bea", fontWeight: "500", textDecoration:"none" }}>
                                         View all
                                     </Link></div>
                                 </div>
                             </div>
                         </div>
                         <div style={{ display: "flex", justifyContent: "space-between", margin: "0 25px 0 0" }}>
-                            <div className='graph-card' style={{ width: "66%", display:"flex", flexDirection:"column", alignItems:"center" }}>
+                            <div className='graph-card' style={{ width: "66%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}>
 
-                                <div style={{ padding: "20px 24px 0 24px", maxHeight:"200px", width:"92%" }}>
+                                <div style={{ padding: "12px 24px 0 24px", maxHeight:"220px", width:"92%" }}>
                                     <Line options={options} data={data} />
                                 </div>
                                 <div style={{marginTop:"25px", display:"flex", fontSize:"12px"}}>
@@ -202,7 +202,7 @@ const Statistics = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className='graph-card' style={{ width: "32%", display:"flex", flexDirection:"column" }}>
+                            <div className='graph-card' style={{ width: "32%", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center" }}>
                                 <div style={{ padding:"15px", fontSize:"14px" }}>
                                     <div className='stat-row'>
                                         <div style={{transform:"translate(0,2.5px)"}}>

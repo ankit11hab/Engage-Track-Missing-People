@@ -266,7 +266,7 @@ def getStatistics(request):
     number_of_persons_tracked_daywise = [0,0,0,0,0,0,0]
     for person in missing_person:
         day_diff = (datetime.datetime.now().date() - person.time_of_addition.date()).days
-        if day_diff<=7:
+        if day_diff<7:
             number_of_persons_enlisted_daywise[6-day_diff] += 1
         if person.isTracked:
             number_of_persons_tracked+=1

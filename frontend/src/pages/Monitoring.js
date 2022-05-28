@@ -101,7 +101,7 @@ const Monitoring = () => {
             <div style={{ fontSize: "17px", margin: "0 0 15px 0" }}>Monitoring</div>
             <div style={{ width: "100%", background: "white", borderRadius: "5px", marginRight:"25px" }}>
                 <div style={{ display: "flex" }}>
-                    <div style={{ display:"flex", flexDirection:"column", margin: "25px 30px 25px 50px", fontSize: "14px", width: "40%", color:"rgb(90,90,90)" }}>
+                    <div style={{ display:"flex", flexDirection:"column", margin: "25px 30px 25px 50px", fontSize: "14px", width: "45%", color:"rgb(90,90,90)" }}>
                         <div>
                             It is highly recommended to do the monitoring in a separate tab. Once you connect with the camera, all the features of this application will get blocked in this tab.<br/><br/>
 
