@@ -12,6 +12,7 @@ import cv2
 import face_recognition
 import requests
 from urllib.parse import urlencode
+from django.conf import settings
 
 known_face_encodings = []
 known_face_names = []
@@ -389,7 +390,7 @@ def autocomplete(request):
     query = request.data['query']
     data_type = "json"
     endpoint = f"https://maps.googleapis.com/maps/api/place/autocomplete/{data_type}"
-    params = {"location":f"{lat},{lng}","key":"AIzaSyCbcM_1NaJDrnmpCp8XJHGfJwk-l_pW_SY","input":f"{query}"}
+    params = {"location":f"{lat},{lng}","key":settings.AUTOCOMPLETE_API_KEY,"input":f"{query}"}
     url_params = urlencode(params)
     url = f"{endpoint}?{url_params}"
     res = requests.get(url)

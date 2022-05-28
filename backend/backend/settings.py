@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-)2!=#+u=&x=u^&@-((6a37_@f6_raf6jep&-k%+rr!27)b*$(-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'authentication.apps.AuthenticationConfig',
     'missing_people.apps.MissingPeopleConfig',
     'camera.apps.CameraConfig',
-    'channels'
+    'channels',
+    'storages'
 ]
 
 REST_FRAMEWORK = {
@@ -166,6 +167,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
@@ -184,3 +188,19 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
+
+
+
+AUTOCOMPLETE_API_KEY = os.environ.get('AUTOCOMPLETE_API_KEY')
+
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_FILE_OVERWRITE = os.environ.get('AWS_S3_FILE_OVERWRITE')
+AWS_DEFAULT_ACL = os.environ.get('AWS_DEFAULT_ACL')
+DEFAULT_FILE_STORAGE = os.environ.get('DEFAULT_FILE_STORAGE')
+STATICFILES_STORAGE = os.environ.get('STATICFILES_STORAGE')
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
+AWS_S3_ADDRESSING_STYLE = os.environ.get('AWS_S3_ADDRESSING_STYLE')
+AWS_S3_SIGNATURE_VERSION = os.environ.get('AWS_S3_SIGNATURE_VERSION')
