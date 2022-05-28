@@ -53,44 +53,50 @@ const MissingPeople = () => {
   const dispatch = useDispatch();
   const allPersons = useSelector(state => state.allPersons)
 
-  const getAllMissingPersons = async (start, end) => {
-    const data = await dispatch(getAllPersons());
+  const getAllMissingPersons = async () => {
+    await dispatch(getAllPersons());
   }
 
-  const getAllCriminalPersons = async (start, end) => {
-    const data = await dispatch(getAllCriminals());
+  const getAllCriminalPersons = async () => {
+    await dispatch(getAllCriminals());
   }
 
-  const getAllTrackedPersons = async (start, end) => {
-    const data = await dispatch(getAllTracked());
+  const getAllTrackedPersons = async () => {
+    await dispatch(getAllTracked());
   }
 
-  const getAllFoundPersons = async (start, end) => {
-    const data = await dispatch(getAllFound());
+  const getAllFoundPersons = async () => {
+    await dispatch(getAllFound());
   }
 
-  const getAllNonCriminalPersons = async (start, end) => {
-    const data = await dispatch(getAllNonCriminals());
+  const getAllNonCriminalPersons = async () => {
+    await dispatch(getAllNonCriminals());
   }
 
-  const getAllAppliedFromHere = async (start, end) => {
-    const data = await dispatch(getAllAppliedHere(JSON.parse(localStorage.getItem("authTokens")).access));
+  const getAllAppliedFromHere = async () => {
+    await dispatch(getAllAppliedHere(JSON.parse(localStorage.getItem("authTokens")).access));
   }
 
   const handleChange = (val) => {
-    console.log(val.value)
-    if (val.value === 'A')
+    switch(val.value) {
+    case 'A':
       getAllMissingPersons();
-    if (val.value === 'T')
+      break;
+    case 'T':
       getAllTrackedPersons();
-    if (val.value === 'F')
+      break;
+    case 'F':
       getAllFoundPersons();
-    if (val.value === 'C')
+      break;
+    case 'C':
       getAllCriminalPersons();
-    if (val.value === 'N')
+      break;
+    case 'N':
       getAllNonCriminalPersons();
-    if (val.value === 'P')
+      break;
+    case 'P':
       getAllAppliedFromHere();
+    }
   }
 
 

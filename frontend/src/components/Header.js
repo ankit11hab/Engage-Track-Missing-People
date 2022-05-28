@@ -14,6 +14,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import NotificationImage from '../images/notifications.svg'
 
 const style = {
   position: 'absolute',
@@ -188,7 +189,7 @@ const Header = () => {
     setInterval(() => {
       if(isAuthenticated)
         getAllNotifications();
-    }, 5000);
+    }, 6000);
 
   }, [])
 
@@ -254,7 +255,7 @@ const Header = () => {
 
       {isAuthenticated ?
         <div style={{ display: "flex" }}>
-          <button style={{ background: "rgb(250, 250, 250)", border: "1px solid rgb(230, 230, 230)", cursor: "pointer", borderRadius: "5px", marginLeft: "25px", padding: "6px" }} onClick={() => navigate(-1)}><ArrowBackIcon style={{ color: "rgb(80, 80, 80)", fontSize: "20px" }} /></button>
+          <button style={{ background: "rgb(250, 250, 250)", border: "1px solid rgb(230, 230, 230)", cursor: "pointer", borderRadius: "5px", margin: "3px 0 0 25px", padding: "6px" }} onClick={() => navigate(-1)}><ArrowBackIcon style={{ color: "rgb(80, 80, 80)", fontSize: "20px" }} /></button>
           <div style={{ marginLeft: "auto" }}>
             {notifications ?
               <><NotificationsActiveOutlinedIcon style={{ fontSize: "26px", color: "rgb(120, 120, 120)", margin: "12px 0px 10px 0", transform: "translate(81px,0)" }} /><span><FiberManualRecordIcon style={{ fontSize: "13px", transform: "translate(67px, -23px)", color: "red" }} /></span></>
@@ -273,6 +274,12 @@ const Header = () => {
               getOptionLabel={e => (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <span style={{ marginLeft: 5 }}>{e.label}</span>
+                </div>
+              )}
+              noOptionsMessage={() => (
+                <div style={{fontSize:"14px"}}>
+                  <center><img src={NotificationImage} width="70px" style={{marginBottom:"10px"}} /></center>
+                  No notifications yet!
                 </div>
               )}
             />
@@ -302,7 +309,7 @@ const Header = () => {
           <div style={{ marginLeft: "auto" }}>
 
           </div>
-          <button onClick={handleloginModalOpen} style={{ margin: "14px 38px 10px 6px", fontWeight: "500", color: "#3f7bea", border: "none", outline: "none", cursor: "pointer", background: "white", fontSize: "14px" }}>Sign In</button>
+          <button onClick={handleloginModalOpen} style={{ margin: "14px 38px 6px 6px", fontWeight: "500", color: "#3f7bea", border: "none", outline: "none", cursor: "pointer", background: "white", fontSize: "14px" }}>Sign In</button>
         </div>
       }
 

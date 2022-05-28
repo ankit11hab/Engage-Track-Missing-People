@@ -6,7 +6,7 @@ from missing_people.models import MissingPerson, TrackHistory
 def createNotification(missingPerson):
     print("Missing")
     police_station = missingPerson.applicant_police_station
-    Notifications(police_station=police_station, message="New person tracked").save()
+    Notifications(police_station=police_station, message=f"{missingPerson.name} has been tracked. Click to view more details").save()
 
 
 def getTimeDiff(person_uuid):

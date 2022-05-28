@@ -68,6 +68,10 @@ def registerInBulk(request):
     decoded_file = file.read().decode('utf-8').splitlines()
     reader = csv.DictReader(decoded_file)
     for row in reader:
+        if not 'police_station_uid' in row:
+            return Response("Could not parse Police Station UID", status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        if not 'phone' in row:
+            return Response("Could not parse Police Station's phone", status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         police_station_uid = row['police_station_uid']
         phone = row['phone']
         newUser = CustomUser(police_station_uid=police_station_uid, phone=phone)

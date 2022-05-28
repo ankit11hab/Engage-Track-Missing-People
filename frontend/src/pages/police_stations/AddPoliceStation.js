@@ -8,7 +8,7 @@ const AddPoliceStation = () => {
   const dispatch = useDispatch();
   const psd = useSelector(state => state.police_station_details);
   const [showError, setShowError] = useState(false);
-  const fileReader = new FileReader();
+  const [showError2, setShowError2] = useState(false);
   const [file, setFile] = useState({ filename: "" });
   const [details, setDetails] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -37,12 +37,12 @@ const AddPoliceStation = () => {
     console.log(newDetail);
     const data = await dispatch(registerUser(JSON.parse(localStorage.getItem("authTokens")).access, newDetail));
     if (data.status === 200)
-      setShowError(false);
+      setShowError2(false);
   }
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    setShowError(false);
+    setShowError2(false);
     let newDetail = {};
     if (details.id)
       newDetail = { ...newDetail, police_station_uid: details.id };
@@ -58,12 +58,15 @@ const AddPoliceStation = () => {
     setIsLoading(false);
   }
 
-  const registerUserBulkFunc = () => {
-    const data = dispatch(registerUserBulk(JSON.parse(localStorage.getItem("authTokens")).access, file));
+  const registerUserBulkFunc = async () => {
+    const data = await dispatch(registerUserBulk(JSON.parse(localStorage.getItem("authTokens")).access, file));
+    if(data.status===false)
+      setShowError(true);
   }
 
   const handleSubmit2 = async () => {
     setIsLoading2(true);
+    setShowError(false);
     if(file) {
       registerUserBulkFunc();
     }
@@ -93,6 +96,9 @@ const AddPoliceStation = () => {
             </div>
           </div>
           <div style={{ display: "flex" }}>
+          <div style={{fontSize:"12px", color:"red", margin: "5px 10px 10px 50px"}}>
+              {showError?"* Police Stations could not be added":null}
+            </div>
             <div style={{ marginLeft: "auto", marginBottom: "30px" }}>
               {isLoading ?
                 <CircularProgress size={20} style={{ margin: "8px 14px 9px 0" }} />
@@ -121,6 +127,9 @@ const AddPoliceStation = () => {
           </label>
           <span style={{ marginLeft: "20px", fontSize: "14px" }}>{file.name}</span>
           <div style={{ display: "flex",width:"100%", marginTop:"10px" }}>
+            <div style={{fontSize:"12px", color:"red", margin: "10px 10px 10px 50px"}}>
+              {showError?"* Police Stations could not be added":null}
+            </div>
             <div style={{ marginLeft: "auto", marginBottom: "30px" }}>
               {isLoading2 ?
                 <CircularProgress size={20} style={{ margin: "8px 14px 9px 0" }} />

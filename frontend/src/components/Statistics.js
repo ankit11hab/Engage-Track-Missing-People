@@ -68,9 +68,7 @@ const Statistics = () => {
     useEffect(async () => {
         await getAllStats();
         let dates = [];
-        
         let d = new Date();
-
         for(let i = 1;i<=7;i++) {
             const date = d.getDate().toString()+'/'+(d.getMonth()+1).toString();
             dates.push(date);

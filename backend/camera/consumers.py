@@ -1,4 +1,3 @@
-import datetime
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 import cv2
@@ -59,6 +58,7 @@ class CameraConsumer(AsyncWebsocketConsumer):
             cv2.putText(original_image,name_of_person,(left_pos,bottom_pos), font, 0.5, (0,0,255),1)
             if flag==1:
                 time_diff = await sync_to_async(getTimeDiff)(person_uuid)
+                print(time_diff)
                 if time_diff>5:
                     camera = await sync_to_async(CameraRecord.objects.get)(channel_name=self.channel_name)
                     location = str(camera.location)
