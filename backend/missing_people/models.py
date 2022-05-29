@@ -42,8 +42,7 @@ class TrackHistory(models.Model):
     location = models.CharField(max_length=300,default="")
     image = models.ImageField(upload_to = 'captured_images', null=True, blank=True)
 
-    def __str__(self):
-        return f"{self.missing_person.name} | {self.time_of_tracking}"
+
 
 
 

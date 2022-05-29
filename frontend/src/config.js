@@ -5,7 +5,7 @@ export const AWS_SERVER_URL_IP = `http://18.223.206.135`;
 export const config = ()=>{
     const confs = {
         'local':{
-            'url':AWS_SERVER_URL_IP,
+            'url':LOCAL_SERVER_URL,
             'AUTOCOMEPLETE_API_KEY': "AIzaSyCbcM_1NaJDrnmpCp8XJHGfJwk-l_pW_SY"
         }
     }

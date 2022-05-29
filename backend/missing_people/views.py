@@ -14,6 +14,7 @@ import requests
 from urllib.parse import urlencode
 import urllib.request
 from django.conf import settings
+import time
 
 
 known_face_encodings = []
@@ -64,7 +65,7 @@ def getAllCriminals(request):
             "applicant_police_station": person.applicant_police_station.police_station_uid,
             "name": person.name,
             "details": person.details,
-            "image": settings.SERVER_URL+'media/'+person.image.name
+            "image": person.image.url
         }
         data.append(missing_person_details)
     
@@ -80,7 +81,7 @@ def getAllNonCriminals(request):
             "applicant_police_station": person.applicant_police_station.police_station_uid,
             "name": person.name,
             "details": person.details,
-            "image": settings.SERVER_URL+'media/'+person.image.name
+            "image": person.image.url
         }
         data.append(missing_person_details)
     
@@ -98,7 +99,7 @@ def getAllAppliedFromHere(request):
             "applicant_police_station": person.applicant_police_station.police_station_uid,
             "name": person.name,
             "details": person.details,
-            "image": settings.SERVER_URL+'media/'+person.image.name
+            "image": person.image.url
         }
         data.append(missing_person_details)
     
@@ -116,7 +117,7 @@ def getAllTracked(request):
                 "applicant_police_station": person.applicant_police_station.police_station_uid,
                 "name": person.name,
                 "details": person.details,
-                "image": settings.SERVER_URL+'media/'+person.image.name
+                "image": person.image.url
             }
             data.append(missing_person_details)
     
@@ -133,7 +134,7 @@ def getAllFound(request):
                 "applicant_police_station": person.applicant_police_station.police_station_uid,
                 "name": person.name,
                 "details": person.details,
-                "image": settings.SERVER_URL+'media/'+person.image.name
+                "image": person.image.url
             }
             data.append(missing_person_details)
     
@@ -151,7 +152,7 @@ def getMyTracked(request):
             "applicant_police_station": person.applicant_police_station.police_station_uid,
             "name": person.name,
             "details": person.details,
-            "image": settings.SERVER_URL+'media/'+person.image.name
+            "image": person.image.url
         }
         data.append(missing_person_details)
     
@@ -170,7 +171,7 @@ def getMyFound(request):
             "applicant_police_station": person.applicant_police_station.police_station_uid,
             "name": person.name,
             "details": person.details,
-            "image": settings.SERVER_URL+'media/'+person.image.name
+            "image": person.image.url
         }
         data.append(missing_person_details)
     
@@ -184,16 +185,18 @@ def getPerson(request):
     police_station_details = CustomUser.objects.filter(police_station_uid = missing_person.applicant_police_station.police_station_uid).first()
     location = missing_person.trackhistory_set.all().order_by("-time_of_tracking")
     track_history = []
+    now_timestamp = time.time()
+    offset = datetime.datetime.fromtimestamp(now_timestamp) - datetime.datetime.utcfromtimestamp(now_timestamp)
     for item in location:
         if item.image.name:
             detail = {
-                "time": item.time_of_tracking,
+                "time": item.time_of_tracking + offset,
                 "location": item.location,
                 "image": item.image.url
             }
         else:
             detail = {
-                "time": item.time_of_tracking,
+                "time": item.time_of_tracking + offset,
                 "location": item.location
             }
         track_history.append(detail)
@@ -222,7 +225,7 @@ def getPerson(request):
 @permission_classes([IsAuthenticated])
 def getNotifications(request):
     user = request.user
-    notifications = Notifications.objects.filter(police_station = user)
+    notifications = Notifications.objects.filter(police_station = user).order_by("-time")
     data = []
     for notification in notifications:
         notification_details = {
@@ -310,8 +313,10 @@ def addPerson(request):
     data = request.data
     person_uuid = uuid.uuid4()
     MissingPerson(person_uuid = person_uuid, applicant_police_station=user, name = data["name"], image=data['image'], age = data["age"], gender = data["gender"], isCriminal = data["isCriminal"], details = data["details"], applicant_email = data["applicant_email"]).save()
-    path = "media/missing_people/"+data['image'].name
-    image = face_recognition.load_image_file(path)
+    person = MissingPerson.objects.get(person_uuid = person_uuid)
+    path = str(person.image.url)
+    response = urllib.request.urlopen(path)
+    image = face_recognition.load_image_file(response)
     try:
         face_encoding = face_recognition.face_encodings(image)[0]
         known_face_encodings.append(face_encoding)
