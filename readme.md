@@ -31,7 +31,7 @@ $ pip install -r requirements.txt
 #### Setting up environment variables
 Create a .env file in the current directory or paste the following command in your terminal if you are in Windows:
 ```javascript
-$ type nul > filename.txt
+$ type nul > .env
 ```
 If you are in linux, type the following command:
 ```javascript
