@@ -65,7 +65,7 @@ Here you will find some statistics about the total number of persons enlisted, t
 
 | Dashboard Page     | 
 | :---:        |   
-| ![image]()      |
+| ![image](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/dashboard.jpg)      |
 
 #### Missing People Page
 Here you will find the list of missing persons. You can also filter them from the dropdown at the top. The dropdown has 5 options: All, Tracked, Found, Criminal, Non-criminal. Also, please note that "a person has been tracked" means he or she has been captured and recognized by a camera. For viewing a person's information, we need to visit the "View details" link present on the card of each person.
