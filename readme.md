@@ -72,48 +72,44 @@ Here you will find the list of missing persons. You can also filter them from th
 
 | Missing People Page     | Filtering |
 | :---:        |    :----:   |
-| ![image]()      |![image]()    | 
+| ![image](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/missingpeoplelist.jpg)      |![image](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/filteredoutmissingpeople.jpg)    | 
 
 #### View Details Page
 Here you will find the details of the missing person, his track history and the details of the police station that has enlisted this person into the database. These are the pages we can access without logging in (The edit and the delete icons will not be accessible unless we log in).
 
 | View Details Page     | 
 | :---:        |   
-| ![image]()      |
+| ![image](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/persondetails.jpg)      |
 
 #### Login Modal
 We have the login option at the right hand side of the header. For logging in, we need Police station UID and the password. Note the changes we get after login. The "Add Missing Person" and the "Monitoring" links are accessible now!
 | Login Modal     | After Login |
 | :---:       |    :----:   |
-| ![image]()      |![image]()    | 
+| ![image](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/signin.jpg)      |![image](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/signedin.jpg)    | 
 
 The edit, delete and the add track history links in the view details page will also be accessible now.
 | Edit Person Details     | Add Track History |
 | :---:        |    :----:   |
-| ![image]()      |![image]()    | 
+| ![image](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/editperson.jpg)      |![image](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/2022-05-29%20(2).png)    | 
 
 #### Add Missing Person Page
 Here you can enlist a new missing person to the database. You can also keep a note of the person's history and add it to database.
 | Add Missing Person Page     | 
 | :---:        |   
-| ![image]()      |
+| ![image](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/addmissingpeople.jpg)      |
 
 #### Monitoring Page
 Finally, we come to the page where you can connect to a camera and deploy it to track people using face-recognition.
 
 | Monitoring Page    | Live Monitoring |
 | :---:        |    :----:   |
-| ![image]()      |![image]()    | 
+| ![image]([https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/monitoring.jpg](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/monitoringpage.jpg))      |![image](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/monitoring.jpg)    | 
 
 #### Notification Popup
 
 Once the server recognizes someone who is there in the database, the police station that added the person will get notified along with the link of the track history of the person.
 
-| Notification Popup     | 
-| :---:        |   
-| ![image]()      |
-
 ## Demonstration video
 Here is the demonstration video for this project: 
-[Video] ()
+[Video] (https://drive.google.com/file/d/1LT0E2t-kOtSztXQj3_e77FQFC2dxUVZO/view?usp=sharing)
 
