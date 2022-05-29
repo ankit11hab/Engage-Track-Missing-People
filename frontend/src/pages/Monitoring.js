@@ -26,13 +26,19 @@ const Monitoring = () => {
         newClient.onmessage = (e) => {
             let data = JSON.parse(e.data);
             console.log('Data: ', data.channel_name);
-            if (data.channel_name) {
-                const details = {
-                    'channel_name': data.channel_name,
-                    'location': 'Habra'
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                if (data.channel_name) {
+                    const details = {
+                        'channel_name': data.channel_name,
+                        'lat': lat,
+                        'lng': lng
+                    }
+                    dispatch(addCameraRecord(details, JSON.parse(localStorage.getItem("authTokens")).access));
                 }
-                dispatch(addCameraRecord(details, JSON.parse(localStorage.getItem("authTokens")).access));
-            }
+            });
+            
         }
 
         await dispatch(changeMonitoringStatus(true));

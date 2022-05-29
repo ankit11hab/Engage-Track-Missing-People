@@ -12,7 +12,9 @@ import cv2
 import face_recognition
 import requests
 from urllib.parse import urlencode
+import urllib.request
 from django.conf import settings
+
 
 known_face_encodings = []
 known_face_names = []
@@ -20,8 +22,9 @@ known_face_uuids = []
 
 missing_persons_for_encodings = MissingPerson.objects.all()
 for person in missing_persons_for_encodings:
-    path = "media/"+str(person.image)
-    image = face_recognition.load_image_file(path)
+    path = str(person.image.url)
+    response = urllib.request.urlopen(path)
+    image = face_recognition.load_image_file(response)
     try:
         face_encoding = face_recognition.face_encodings(image)[0]
         known_face_encodings.append(face_encoding)
@@ -45,7 +48,7 @@ def getAllPersons(request):
             "applicant_police_station": person.applicant_police_station.police_station_uid,
             "name": person.name,
             "details": person.details,
-            "image": settings.SERVER_URL+'media/'+person.image.name
+            "image": person.image.url
         }
         data.append(missing_person_details)
     
@@ -186,7 +189,7 @@ def getPerson(request):
             detail = {
                 "time": item.time_of_tracking,
                 "location": item.location,
-                "image": settings.SERVER_URL+'media/'+item.image.name
+                "image": item.image.url
             }
         else:
             detail = {
@@ -208,7 +211,7 @@ def getPerson(request):
         "isFound": missing_person.isFound,
         "details": missing_person.details,
         "applicant_email": missing_person.applicant_email,
-        "image": settings.SERVER_URL+'media/'+missing_person.image.name,
+        "image": missing_person.image.url,
         "track_history": track_history
     }
     
@@ -391,6 +394,21 @@ def autocomplete(request):
     data_type = "json"
     endpoint = f"https://maps.googleapis.com/maps/api/place/autocomplete/{data_type}"
     params = {"location":f"{lat},{lng}","key":settings.AUTOCOMPLETE_API_KEY,"input":f"{query}"}
+    url_params = urlencode(params)
+    url = f"{endpoint}?{url_params}"
+    res = requests.get(url)
+    if not res.status_code in range(200,299):
+        return {}
+    return Response(res.json())
+
+
+@api_view(['GET','POST'])
+def decode_latlang(request):
+    lat = request.data["lat"]
+    lng = request.data["lng"]
+    data_type = "json"
+    endpoint = f"https://maps.googleapis.com/maps/api/geocode/{data_type}"
+    params = {"latlng":f"{lat},{lng}","key":settings.AUTOCOMPLETE_API_KEY}
     url_params = urlencode(params)
     url = f"{endpoint}?{url_params}"
     res = requests.get(url)
