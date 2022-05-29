@@ -103,7 +103,7 @@ Finally, we come to the page where you can connect to a camera and deploy it to 
 
 | Monitoring Page    | Live Monitoring |
 | :---:        |    :----:   |
-| ![image]([https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/monitoring.jpg](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/monitoringpage.jpg))      |![image](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/monitoring.jpg)    | 
+| ![image]([https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/monitoring.jpg](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/monitoringpage.jpg)      |![image](https://github.com/ankit11hab/Engage-Track-Missing-People/blob/master/screenshots/monitoring.jpg)    | 
 
 #### Notification Popup
 
