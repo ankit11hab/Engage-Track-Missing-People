@@ -1,5 +1,5 @@
 .left-nav-outer {
-    width: 250px;
+    width: 20vw;
     height: 100vh;
     border-radius: 0 8px 8px 0;
 }
@@ -11,34 +11,34 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    border-radius: 0 8px 8px 0;
 }
 
 .top-intro {
     height: 60px;
     background-color: #060f1f;
     color: rgb(222, 222, 222);
-    font-size: 17px;
+    font-size: 1.3vw;
     font-weight: 500;
     display: flex;
     flex-direction: column;
     justify-content:center;
-    padding-left: 15px;
+    padding-left: 1.5vw;
 }
 
 .bottom-links {
-    padding: 20px 0 0 0;
+    padding: 2vw 0 0 0;
     height: 100%;
     background-color: #172338;
     color: rgb(222, 222, 222);
-    font-size: 15px;
+    font-size: 1.18vw;
 }
 
 .bottom-link {
     text-decoration: none;
     color: rgb(222, 222, 222);
-    padding: 4px 6px 4px 6px;
-    margin: 2px 12px 2px 10px;
+    /* padding: 4px 6px 4px 6px; */
+    padding: 0.4vw 0.5vw 0.4vw 0.5vw;
+    margin: 0.12vw 1vw 0.12vw 1vw;
     border-radius: 6px;
     display: flex;
 }
@@ -46,8 +46,8 @@
 .bottom-link-2 {
     text-decoration: none;
     color: rgb(222, 222, 222);
-    padding: 4px 6px 4px 6px;
-    margin: 2px 12px 2px 10px;
+    padding: 0.4vw 0.5vw 0.4vw 0.5vw;
+    margin: 0.12vw 1vw 0.12vw 1vw;
     border-radius: 6px;
     display: flex;
     cursor: default;
